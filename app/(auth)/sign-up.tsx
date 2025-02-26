@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import { useState } from "react";
-import { KeyboardAvoidingView, Platform, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { Button, TextInput, useTheme } from "react-native-paper";
 
 export default function SignUpScreen() {
@@ -11,8 +11,7 @@ export default function SignUpScreen() {
   const [secureText, setSecureText] = useState(true);
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    <View
       style={{
         flex: 1,
         justifyContent: "center",
@@ -74,12 +73,12 @@ export default function SignUpScreen() {
       >
         <Text>Already have an account? </Text>
         <Link
-          href={"/"}
+          href={"/sign-in"}
           style={{ color: theme.colors.primary, fontWeight: "bold" }}
         >
-          Login
+          Sign in
         </Link>
       </View>
-    </KeyboardAvoidingView>
+    </View>
   );
 }
