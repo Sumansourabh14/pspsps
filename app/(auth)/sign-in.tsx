@@ -1,21 +1,44 @@
+import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/providers/AuthProvider";
 import { Ionicons } from "@expo/vector-icons";
-import { Link } from "expo-router";
+import { Link, Redirect } from "expo-router";
 import { useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Button, TextInput, useTheme } from "react-native-paper";
 
 export default function SignInScreen() {
+  const { session } = useAuth();
   const theme = useTheme();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [secureText, setSecureText] = useState(true);
+  const [loading, setLoading] = useState(false);
+
+  async function signInWithEmail() {
+    setLoading(true);
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password,
+    });
+
+    if (error) {
+      Alert.alert(error.message);
+    }
+
+    setLoading(false);
+  }
+
+  if (session) {
+    return <Redirect href={"/"} />;
+  }
 
   return (
     <View style={styles.container}>
       <View style={{ alignItems: "center", marginBottom: 20 }}>
         <Ionicons name="paw" size={64} color={theme.colors.primary} />
         <Text style={{ fontWeight: "bold", marginTop: 10, fontSize: 36 }}>
-          Login
+          Sign in
         </Text>
       </View>
 
@@ -52,7 +75,7 @@ export default function SignInScreen() {
 
       <Button
         mode="contained"
-        onPress={() => console.log("Logging in...")}
+        onPress={signInWithEmail}
         style={{
           marginTop: 16,
           paddingVertical: 8, // Bigger Button
@@ -61,7 +84,7 @@ export default function SignInScreen() {
         }}
         labelStyle={{ fontSize: 18, fontWeight: "bold" }}
       >
-        Login
+        {loading ? "Signing in..." : "Sign in"}
       </Button>
 
       <View
