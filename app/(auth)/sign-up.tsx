@@ -1,7 +1,8 @@
+import { supabase } from "@/lib/supabase";
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import { useState } from "react";
-import { Text, View } from "react-native";
+import { Alert, Text, View } from "react-native";
 import { Button, TextInput, useTheme } from "react-native-paper";
 
 export default function SignUpScreen() {
@@ -9,6 +10,22 @@ export default function SignUpScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [secureText, setSecureText] = useState(true);
+  const [loading, setLoading] = useState(false);
+
+  async function signUpWithEmail() {
+    setLoading(true);
+
+    const { data, error } = await supabase.auth.signUp({
+      email: email,
+      password: password,
+    });
+
+    if (error) {
+      Alert.alert(error.message);
+    }
+
+    setLoading(false);
+  }
 
   return (
     <View
@@ -52,7 +69,7 @@ export default function SignUpScreen() {
 
       <Button
         mode="contained"
-        onPress={() => console.log("Sign up...")}
+        onPress={signUpWithEmail}
         style={{
           marginTop: 16,
           paddingVertical: 8, // Bigger Button
@@ -61,7 +78,7 @@ export default function SignUpScreen() {
         }}
         labelStyle={{ fontSize: 18, fontWeight: "bold" }}
       >
-        Sign up
+        {loading ? "Signing up..." : "Sign up"}
       </Button>
 
       <View
