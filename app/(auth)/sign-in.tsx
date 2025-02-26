@@ -1,13 +1,11 @@
 import { supabase } from "@/lib/supabase";
-import { useAuth } from "@/providers/AuthProvider";
 import { Ionicons } from "@expo/vector-icons";
-import { Link, Redirect } from "expo-router";
+import { Link } from "expo-router";
 import { useState } from "react";
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Button, TextInput, useTheme } from "react-native-paper";
 
 export default function SignInScreen() {
-  const { session } = useAuth();
   const theme = useTheme();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -27,10 +25,6 @@ export default function SignInScreen() {
     }
 
     setLoading(false);
-  }
-
-  if (session) {
-    return <Redirect href={"/"} />;
   }
 
   return (
