@@ -1,7 +1,7 @@
 import { View } from "@/components/Themed";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/AuthProvider";
-import { Redirect } from "expo-router";
+import { Link, Redirect } from "expo-router";
 import { StyleSheet } from "react-native";
 import { ActivityIndicator, Button } from "react-native-paper";
 
@@ -18,6 +18,19 @@ const index = () => {
 
   return (
     <View style={styles.container}>
+      <Link href={"/onboarding"} asChild>
+        <Button
+          style={{
+            marginVertical: 20,
+            paddingVertical: 8, // Bigger Button
+            borderRadius: 50, // Rounded Button
+            backgroundColor: "#000",
+          }}
+          labelStyle={{ fontSize: 18, fontWeight: "bold", color: "#fff" }}
+        >
+          Onboarding
+        </Button>
+      </Link>
       <Button
         onPress={() => supabase.auth.signOut()}
         style={{
