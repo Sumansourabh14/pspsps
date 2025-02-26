@@ -1,3 +1,15 @@
+# User Session Management
+
+## Manage user sessions.
+
+- If user is not logged in, redirect to Sign in screen.
+- If user is logged in:
+  - Don't show the auth screens (sign in, sign out)
+  - Listen for session change/update (real time navigation - e.g. if user signs in, redirect home automatically)
+
+## `AuthProvider.tsx`
+
+```
 import { supabase } from "@/lib/supabase";
 import { Session, User } from "@supabase/supabase-js";
 import {
@@ -41,7 +53,6 @@ export default function AuthProvider({ children }: PropsWithChildren) {
 
     fetchSession();
 
-    // listen for session change/update (real time navigation - e.g. if user signs in, redirect to home automatically)
     supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
     });
@@ -55,3 +66,4 @@ export default function AuthProvider({ children }: PropsWithChildren) {
 }
 
 export const useAuth = () => useContext(AuthContext);
+```
