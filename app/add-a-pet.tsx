@@ -2,7 +2,8 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/AuthProvider";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
-import React, { useEffect, useState } from "react";
+import { router } from "expo-router";
+import React, { useState } from "react";
 import { Alert, FlatList, Pressable, StyleSheet, View } from "react-native";
 import { Button, Card, Text, TextInput } from "react-native-paper";
 
@@ -48,30 +49,81 @@ const genderItems = [
   },
 ];
 
+const yesOrNoItems = [
+  {
+    id: "1",
+    name: "Yes",
+    type: "yes",
+  },
+  {
+    id: "2",
+    name: "No",
+    type: "no",
+  },
+];
+
 const PetCard = ({
   pet,
   handlePress,
+  isSelected,
   isIonicons,
 }: {
   pet: { name: string; type: string; icon: string };
-}) => (
-  <Pressable onPress={handlePress} style={{ flex: 1 }}>
-    <Card style={{ flex: 1, margin: 10, borderRadius: 12, elevation: 4 }}>
-      <View style={{ alignItems: "center", padding: 20 }}>
-        {isIonicons ? (
-          <Ionicons name={pet.icon} size={60} color="black" />
-        ) : (
-          <FontAwesome5 name={pet.icon} size={60} color="black" />
-        )}
-      </View>
-      <Card.Content style={{ padding: 10 }}>
-        <Text variant="titleMedium" style={{ color: "bold" }}>
-          {pet.name}
-        </Text>
-      </Card.Content>
-    </Card>
-  </Pressable>
-);
+  handlePress: () => void;
+  isSelected: boolean;
+  isIonicons: boolean;
+}) => {
+  return (
+    <Pressable onPress={handlePress} style={{ flex: 1 }}>
+      <Card
+        style={[
+          styles.card,
+          isSelected && styles.selectedBorder, // Apply border if selected
+        ]}
+      >
+        <View style={{ alignItems: "center", padding: 20 }}>
+          {isIonicons ? (
+            <Ionicons name={pet.icon} size={60} color="black" />
+          ) : (
+            <FontAwesome5 name={pet.icon} size={60} color="black" />
+          )}
+        </View>
+        <Card.Content style={{ padding: 10 }}>
+          <Text variant="titleMedium" style={{ fontWeight: "bold" }}>
+            {pet.name}
+          </Text>
+        </Card.Content>
+      </Card>
+    </Pressable>
+  );
+};
+
+const YesOrNoCard = ({
+  item,
+  handlePress,
+  isSelected,
+}: {
+  item: { name: string; type: string };
+  handlePress: () => void;
+  isSelected: boolean;
+}) => {
+  return (
+    <Pressable onPress={handlePress} style={{ flex: 1 }}>
+      <Card
+        style={[
+          styles.card,
+          isSelected && styles.selectedBorder, // Apply border if selected
+        ]}
+      >
+        <Card.Content style={{ padding: 10 }}>
+          <Text variant="titleMedium" style={{ fontWeight: "bold" }}>
+            {item.name}
+          </Text>
+        </Card.Content>
+      </Card>
+    </Pressable>
+  );
+};
 
 export default function AddPetScreen() {
   const { session } = useAuth();
@@ -81,20 +133,18 @@ export default function AddPetScreen() {
   const [age, setAge] = useState(0);
   const [loading, setLoading] = useState(false);
   const [current, setCurrent] = useState(0);
+  const [selectedPet, setSelectedPet] = useState<string | null>(null);
+  const [selectedGender, setSelectedGender] = useState<string | null>(null);
+  const [selectedChoice, setSelectedChoice] = useState<string | null>(null);
 
   const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState("date");
   const [show, setShow] = useState(false);
 
-  useEffect(() => {
-    console.log({ species });
-  }, [species]);
-
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate;
     setShow(false);
     setDate(currentDate);
-    console.log({ currentDate });
   };
 
   const showMode = (currentMode) => {
@@ -107,7 +157,10 @@ export default function AddPetScreen() {
   };
 
   const handleSubmit = async () => {
+    setLoading(true);
+
     const updates = {
+      name,
       user_id: session?.user.id,
       species,
       birth_date: date,
@@ -115,11 +168,18 @@ export default function AddPetScreen() {
       gender,
     };
 
-    const { status } = await supabase.from("pets").upsert(updates);
+    const { status, error } = await supabase.from("pets").upsert(updates);
 
     if (status === 200 || status === 201) {
       Alert.alert("Pet added successfully!");
+      router.push("/");
     }
+
+    if (error) {
+      Alert.alert(error.message);
+    }
+
+    setLoading(false);
   };
 
   return (
@@ -137,12 +197,20 @@ export default function AddPetScreen() {
               keyExtractor={(item) => item.id}
               numColumns={2}
               renderItem={({ item }) => (
-                <PetCard pet={item} handlePress={() => setSpecies(item.type)} />
+                <PetCard
+                  pet={item}
+                  handlePress={() => {
+                    setSpecies(item.type);
+                    setSelectedPet(item.type);
+                  }}
+                  isSelected={selectedPet === item.type}
+                  isIonicons={false}
+                />
               )}
             />
           </View>
           <Button
-            onPress={() => setCurrent(2)}
+            onPress={() => setCurrent(1)}
             mode="contained"
             style={{
               marginTop: 16,
@@ -160,11 +228,11 @@ export default function AddPetScreen() {
         <View>
           <View style={{ alignItems: "center", marginBottom: 20 }}>
             <Text style={{ fontWeight: "bold", marginTop: 10, fontSize: 24 }}>
-              Add your pet
+              What is the name of your {species}?
             </Text>
           </View>
           <TextInput
-            label="Your pet's name"
+            label={`Your ${species}'s name`}
             value={name}
             onChangeText={setName}
             mode="outlined"
@@ -179,9 +247,22 @@ export default function AddPetScreen() {
               marginTop: 16,
               paddingVertical: 8,
               borderRadius: 50,
-              backgroundColor: "#000",
             }}
             labelStyle={{ fontSize: 18, fontWeight: "bold" }}
+            disabled={!!name}
+          >
+            Hmm not decided yet
+          </Button>
+          <Button
+            onPress={() => setCurrent(2)}
+            mode="contained"
+            style={{
+              marginTop: 16,
+              paddingVertical: 8,
+              borderRadius: 50,
+            }}
+            labelStyle={{ fontSize: 18, fontWeight: "bold" }}
+            disabled={!name}
           >
             Continue
           </Button>
@@ -191,7 +272,7 @@ export default function AddPetScreen() {
         <>
           <View style={{ alignItems: "center", marginBottom: 20 }}>
             <Text style={{ fontWeight: "bold", marginTop: 10, fontSize: 24 }}>
-              What is the gender of your {species}?
+              What is the gender of {!!name ? name : `your ${species}`}?
             </Text>
           </View>
           <View style={{ padding: 10 }}>
@@ -202,8 +283,12 @@ export default function AddPetScreen() {
               renderItem={({ item }) => (
                 <PetCard
                   pet={item}
-                  handlePress={() => setGender(item.type)}
+                  handlePress={() => {
+                    setGender(item.type);
+                    setSelectedGender(item.type);
+                  }}
                   isIonicons={true}
+                  isSelected={selectedGender === item.type}
                 />
               )}
             />
@@ -227,44 +312,94 @@ export default function AddPetScreen() {
         <>
           <View style={{ alignItems: "center", marginBottom: 20 }}>
             <Text style={{ fontWeight: "bold", marginTop: 10, fontSize: 24 }}>
-              What is the age or date of birth of your {species}?
+              Do you know the age of {!!name ? name : `your ${species}`}?
             </Text>
           </View>
-          <View>
-            <Button onPress={showDatepicker}>Show date picker!</Button>
-            {show && (
-              <RNDateTimePicker
-                testID="dateTimePicker"
-                value={date}
-                mode={mode}
-                onChange={onChange}
-              />
-            )}
-          </View>
           <View style={{ padding: 10 }}>
-            <TextInput
-              label="Age"
-              value={age}
-              onChangeText={setAge}
-              mode="outlined"
-              style={{ marginBottom: 15 }}
-              keyboardType="default"
-              left={<TextInput.Icon icon="email-outline" />}
+            <FlatList
+              data={yesOrNoItems}
+              keyExtractor={(item) => item.id}
+              numColumns={2}
+              renderItem={({ item }) => (
+                <YesOrNoCard
+                  item={item}
+                  handlePress={() => {
+                    setSelectedChoice(item.type);
+                  }}
+                  isSelected={selectedChoice === item.type}
+                />
+              )}
             />
           </View>
-          <Button
-            onPress={handleSubmit}
-            mode="contained"
-            style={{
-              marginTop: 16,
-              paddingVertical: 8,
-              borderRadius: 50,
-            }}
-            labelStyle={{ fontSize: 18, fontWeight: "bold" }}
-            disabled={!species}
-          >
-            Submit
-          </Button>
+          {selectedChoice === "yes" ? (
+            <>
+              <Text style={{ fontWeight: "bold", marginTop: 10, fontSize: 18 }}>
+                Great! Type the age
+              </Text>
+              <View style={{ padding: 10 }}>
+                <TextInput
+                  label="Age"
+                  value={age}
+                  onChangeText={setAge}
+                  mode="outlined"
+                  style={{ marginBottom: 15 }}
+                  keyboardType="default"
+                  left={<TextInput.Icon icon="email-outline" />}
+                />
+              </View>
+              <View>
+                <Button
+                  onPress={showDatepicker}
+                  mode="contained"
+                  style={{
+                    marginTop: 16,
+                    paddingVertical: 2,
+                    borderRadius: 50,
+                  }}
+                  labelStyle={{ fontSize: 16, fontWeight: "bold" }}
+                >
+                  Or choose the date of birth
+                </Button>
+                {show && (
+                  <RNDateTimePicker
+                    testID="dateTimePicker"
+                    value={date}
+                    mode={mode}
+                    onChange={onChange}
+                  />
+                )}
+              </View>
+              <Button
+                onPress={handleSubmit}
+                mode="contained"
+                style={{
+                  marginTop: 16,
+                  paddingVertical: 8,
+                  borderRadius: 50,
+                }}
+                labelStyle={{ fontSize: 18, fontWeight: "bold" }}
+                disabled={!age || !date || loading}
+              >
+                {loading ? "Saving..." : "Submit"}
+              </Button>
+            </>
+          ) : (
+            selectedChoice === "no" && (
+              <Button
+                onPress={handleSubmit}
+                mode="contained"
+                style={{
+                  marginTop: 16,
+                  paddingVertical: 8,
+                  borderRadius: 50,
+                }}
+                labelStyle={{ fontSize: 18, fontWeight: "bold" }}
+                disabled={loading}
+              >
+                {loading ? "Saving..." : "Submit"}
+              </Button>
+            )
+          )}
         </>
       )}
     </View>
@@ -276,4 +411,11 @@ const styles = StyleSheet.create({
     marginTop: 20,
     paddingHorizontal: 24,
   },
+  selectedBorder: {
+    borderWidth: 2,
+    borderColor: "#000",
+    padding: 10,
+    margin: 5,
+  },
+  card: { flex: 1, margin: 10, borderRadius: 12, elevation: 4, borderWidth: 0 },
 });
