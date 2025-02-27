@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native";
 
 import { View } from "@/components/Themed";
 
-export default function TabTwoScreen() {
+export default function HomeScreen() {
   return <View style={styles.container}></View>;
 }
 

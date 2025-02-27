@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import Animated, { FadeInDown } from "react-native-reanimated";
 
 const WelcomeScreen = () => {
   const { session, loading } = useAuth();
@@ -19,7 +20,7 @@ const WelcomeScreen = () => {
   }
 
   if (!!session) {
-    return <Redirect href={"/onboarding"} />;
+    return <Redirect href={"/(tabs)/home"} />;
   }
 
   return (
@@ -39,34 +40,38 @@ const WelcomeScreen = () => {
             ]}
             style={styles.background}
           >
-            <View style={styles.wrapper}>
-              <Text style={styles.title}>pspsps</Text>
-              <Text style={styles.description}>Your pet's 2nd best friend</Text>
-              <View style={styles.socialLoginButtons}>
-                <Link href={"/onboarding"} asChild>
-                  <TouchableOpacity style={styles.btn}>
-                    <Text style={styles.btnText}>Onboarding</Text>
-                  </TouchableOpacity>
-                </Link>
-                <Link href={"/sign-up"} asChild>
-                  <TouchableOpacity style={styles.btn}>
-                    <Ionicons name="mail-outline" size={20} />
-                    <Text style={styles.btnText}>Continue with email</Text>
-                  </TouchableOpacity>
-                </Link>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Text>Already have an account? </Text>
-                  <Link href={"/sign-in"} style={{ fontWeight: "bold" }}>
-                    Sign in
+            <Animated.View entering={FadeInDown.delay(300).duration(500)}>
+              <View style={styles.wrapper}>
+                <Text style={styles.title}>pspsps</Text>
+                <Text style={styles.description}>
+                  Your pet's 2nd best friend
+                </Text>
+                <View style={styles.socialLoginButtons}>
+                  <Link href={"/onboarding"} asChild>
+                    <TouchableOpacity style={styles.btn}>
+                      <Text style={styles.btnText}>Onboarding</Text>
+                    </TouchableOpacity>
                   </Link>
+                  <Link href={"/sign-up"} asChild>
+                    <TouchableOpacity style={styles.btn}>
+                      <Ionicons name="mail-outline" size={20} />
+                      <Text style={styles.btnText}>Continue with email</Text>
+                    </TouchableOpacity>
+                  </Link>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Text>Already have an account? </Text>
+                    <Link href={"/sign-in"} style={{ fontWeight: "bold" }}>
+                      Sign in
+                    </Link>
+                  </View>
                 </View>
               </View>
-            </View>
+            </Animated.View>
           </LinearGradient>
         </View>
       </ImageBackground>
@@ -110,7 +115,7 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: "gray",
     borderStyle: "solid",
-    borderRadius: 20,
+    borderRadius: 25,
     padding: 10,
     marginBottom: 20,
     flexDirection: "row",
