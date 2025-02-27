@@ -2,7 +2,7 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/AuthProvider";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Alert, FlatList, Pressable, StyleSheet, View } from "react-native";
 import { Button, Card, Text, TextInput } from "react-native-paper";
 
@@ -85,10 +85,6 @@ export default function AddPetScreen() {
   const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState("date");
   const [show, setShow] = useState(false);
-
-  useEffect(() => {
-    console.log({ species });
-  }, [species]);
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate;
