@@ -1,49 +1,76 @@
-import { View } from "@/components/Themed";
-import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/AuthProvider";
-import { Link, Redirect } from "expo-router";
-import { StyleSheet } from "react-native";
-import { ActivityIndicator, Button } from "react-native-paper";
+import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import { Link, Redirect, Stack } from "expo-router";
+import {
+  ActivityIndicator,
+  ImageBackground,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
-const index = () => {
-  const { session, user, loading } = useAuth();
+const WelcomeScreen = () => {
+  const { session, loading } = useAuth();
 
   if (loading) {
     return <ActivityIndicator />;
   }
 
-  if (!session) {
-    return <Redirect href={"/sign-in"} />;
+  if (!!session) {
+    return <Redirect href={"/onboarding"} />;
   }
 
   return (
-    <View style={styles.container}>
-      <Link href={"/onboarding"} asChild>
-        <Button
-          style={{
-            marginVertical: 20,
-            paddingVertical: 8, // Bigger Button
-            borderRadius: 50, // Rounded Button
-            backgroundColor: "#000",
-          }}
-          labelStyle={{ fontSize: 18, fontWeight: "bold", color: "#fff" }}
-        >
-          Onboarding
-        </Button>
-      </Link>
-      <Button
-        onPress={() => supabase.auth.signOut()}
-        style={{
-          marginVertical: 20,
-          paddingVertical: 8, // Bigger Button
-          borderRadius: 50, // Rounded Button
-          backgroundColor: "darkred", // Swiggy/Zomato Orange
-        }}
-        labelStyle={{ fontSize: 18, fontWeight: "bold", color: "#fff" }}
+    <>
+      <Stack.Screen name="index" options={{ headerShown: false }} />
+      <ImageBackground
+        source={require("@/assets/images/dog-with-flower.jpg")}
+        style={{ flex: 1 }}
+        resizeMode="cover"
       >
-        Sign out
-      </Button>
-    </View>
+        <View style={styles.container}>
+          <LinearGradient
+            colors={[
+              "transparent",
+              "rgba(255,255,255,0.7)",
+              "rgba(255,255,255,1)",
+            ]}
+            style={styles.background}
+          >
+            <View style={styles.wrapper}>
+              <Text style={styles.title}>pspsps</Text>
+              <Text style={styles.description}>Your pet's 2nd best friend</Text>
+              <View style={styles.socialLoginButtons}>
+                <Link href={"/onboarding"} asChild>
+                  <TouchableOpacity style={styles.btn}>
+                    <Text style={styles.btnText}>Onboarding</Text>
+                  </TouchableOpacity>
+                </Link>
+                <Link href={"/sign-up"} asChild>
+                  <TouchableOpacity style={styles.btn}>
+                    <Ionicons name="mail-outline" size={20} />
+                    <Text style={styles.btnText}>Continue with email</Text>
+                  </TouchableOpacity>
+                </Link>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Text>Already have an account? </Text>
+                  <Link href={"/sign-in"} style={{ fontWeight: "bold" }}>
+                    Sign in
+                  </Link>
+                </View>
+              </View>
+            </View>
+          </LinearGradient>
+        </View>
+      </ImageBackground>
+    </>
   );
 };
 
@@ -51,8 +78,51 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
+  },
+  background: {
+    flex: 1,
+    position: "absolute",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    justifyContent: "flex-end",
+  },
+  wrapper: {
+    paddingBottom: 40,
+    alignItems: "center",
     paddingHorizontal: 24,
+  },
+  title: {
+    fontSize: 60,
+    fontWeight: "100",
+    marginBottom: 10,
+    color: "darkblue",
+  },
+  description: {
+    fontSize: 16,
+    marginBottom: 20,
+  },
+  socialLoginButtons: {
+    alignSelf: "stretch",
+  },
+  btn: {
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: "gray",
+    borderStyle: "solid",
+    borderRadius: 20,
+    padding: 10,
+    marginBottom: 20,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 6,
+  },
+  btnText: {
+    textAlign: "center",
+    fontSize: 14,
+    fontWeight: "600",
   },
 });
 
-export default index;
+export default WelcomeScreen;
