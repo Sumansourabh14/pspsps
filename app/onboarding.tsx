@@ -1,8 +1,8 @@
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/AuthProvider";
-import { router } from "expo-router";
+import { Redirect, router } from "expo-router";
 import React, { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 
 export default function OnboardingScreen() {
@@ -24,6 +24,14 @@ export default function OnboardingScreen() {
       router.push("/add-a-pet");
     }
   };
+
+  if (loading) {
+    return <ActivityIndicator />;
+  }
+
+  if (!session) {
+    return <Redirect href={"/"} />;
+  }
 
   return (
     <View style={styles.container}>
