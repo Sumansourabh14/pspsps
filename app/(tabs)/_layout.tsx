@@ -34,6 +34,15 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="reminders"
+        options={{
+          title: "Reminders",
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="clock-o" color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="profile"
         options={{
           title: "Profile",
