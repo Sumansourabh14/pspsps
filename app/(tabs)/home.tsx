@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/AuthProvider";
 import { useEffect, useState } from "react";
 import { Card, Text } from "react-native-paper";
+import { Link } from "expo-router";
 
 interface Pet {
   id: number;
@@ -15,17 +16,25 @@ interface Pet {
 
 const PetCard = ({ pet }: { pet: Pet }) => {
   return (
-    <Pressable style={{ flex: 1 }}>
-      <Card style={[styles.card]}>
-        <View style={{ alignItems: "center", padding: 20 }}></View>
-        <Card.Content style={{ padding: 10 }}>
-          <Text variant="titleMedium" style={{ fontWeight: "bold" }}>
-            {pet.name}
-          </Text>
-          <Text variant="titleSmall">{pet.species}</Text>
-        </Card.Content>
-      </Card>
-    </Pressable>
+    <Link
+      href={{
+        pathname: "/pets/[pet]",
+        params: { id: pet.id },
+      }}
+      asChild
+    >
+      <Pressable style={{ flex: 1 }}>
+        <Card style={[styles.card]}>
+          <View style={{ alignItems: "center", padding: 20 }}></View>
+          <Card.Content style={{ padding: 10 }}>
+            <Text variant="titleMedium" style={{ fontWeight: "bold" }}>
+              {pet.name}
+            </Text>
+            <Text variant="titleSmall">{pet.species}</Text>
+          </Card.Content>
+        </Card>
+      </Pressable>
+    </Link>
   );
 };
 
