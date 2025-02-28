@@ -1,11 +1,11 @@
 import { FlatList, Pressable, StyleSheet } from "react-native";
-
+import EditButton from "@/components/buttons/EditButton";
 import { View } from "@/components/Themed";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/AuthProvider";
+import { Link } from "expo-router";
 import { useEffect, useState } from "react";
 import { Card, Text } from "react-native-paper";
-import { Link } from "expo-router";
 
 interface Pet {
   id: number;
@@ -84,6 +84,7 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
+      <EditButton title={"Add new pet"} destination={`/add-a-pet`} />
       <FlatList
         data={pets}
         keyExtractor={(item) => item.id.toString()}
