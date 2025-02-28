@@ -1,9 +1,9 @@
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/AuthProvider";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
-import { Link, Stack, useLocalSearchParams } from "expo-router";
+import { Link, router, Stack, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Image, ScrollView, StyleSheet, View } from "react-native";
+import { Alert, Image, ScrollView, StyleSheet, View } from "react-native";
 import { Avatar, Button, Card, Text } from "react-native-paper";
 
 interface Pet {
@@ -70,6 +70,30 @@ const PetScreen = () => {
     return `${years} years`;
   };
 
+  const handleRemovePet = async () => {
+    const { error, status } = await supabase.from("pets").delete().eq("id", id);
+
+    if (error) {
+      Alert.alert("Not able to delete this pet profile. Please try again.");
+    }
+
+    if (status === 204) {
+      Alert.alert(
+        "Pet removed successfully!",
+        "You can go back to the home screen",
+        [
+          {
+            text: "OK",
+            onPress: () => {
+              router.back();
+            },
+          },
+        ],
+        { cancelable: false }
+      );
+    }
+  };
+
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -88,7 +112,10 @@ const PetScreen = () => {
 
   return (
     <>
-      <Stack.Screen name="[pet]" options={{ headerTitle: petData.name }} />
+      <Stack.Screen
+        name="[pet]"
+        options={{ headerTitle: petData.name ? petData.name : "NA" }}
+      />
       <ScrollView style={styles.container}>
         {/* Pet Image Header */}
         <View style={styles.imageContainer}>
@@ -194,6 +221,16 @@ const PetScreen = () => {
             Edit Profile
           </Button>
         </Link>
+
+        <Button
+          onPress={handleRemovePet}
+          mode="contained"
+          style={styles.deleteButton}
+          labelStyle={styles.editButtonLabel}
+          icon="delete"
+        >
+          Remove
+        </Button>
       </ScrollView>
     </>
   );
@@ -268,5 +305,11 @@ const styles = StyleSheet.create({
   editButtonLabel: {
     fontSize: 16,
     fontWeight: "600",
+  },
+  deleteButton: {
+    marginHorizontal: 16,
+    borderRadius: 8,
+    backgroundColor: "darkred",
+    paddingVertical: 4,
   },
 });

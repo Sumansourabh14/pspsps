@@ -3,7 +3,13 @@ import { useAuth } from "@/providers/AuthProvider";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import {
   Button,
   Card,
@@ -71,24 +77,23 @@ const EditPetScreen = () => {
 
     setSaving(true);
     try {
-      const { error } = await supabase
+      const { status, error } = await supabase
         .from("pets")
         .update({
           name: petData.name,
           species: petData.species,
           gender: petData.gender,
           birth_date: petData.birth_date,
-          image_url: petData.image_url,
         })
         .eq("id", petData.id);
 
-      if (error) throw error;
-
-      // Navigate back to pet profile
-      router.back();
+      // Navigate to the same pet profile
+      if (status === 201 || status === 204) {
+        router.push({ pathname: `/pets/[pet]`, params: { id: petData.id } });
+      }
     } catch (error) {
       console.error("Error updating pet:", error);
-      alert("Failed to save changes. Please try again.");
+      Alert.alert("Failed to save changes. Please try again.");
     } finally {
       setSaving(false);
     }
@@ -108,7 +113,7 @@ const EditPetScreen = () => {
     <>
       <Stack.Screen
         options={{
-          headerTitle: `Edit ${petData.name}`,
+          headerTitle: `Edit ${petData.name ? petData.name : "NA"}`,
           headerRight: () => (
             <Button
               onPress={handleSave}
@@ -125,8 +130,9 @@ const EditPetScreen = () => {
         <Card style={styles.card}>
           <Card.Content>
             {/* Name Input */}
+            <Text style={styles.label}>Pet Name</Text>
             <TextInput
-              label="Pet Name"
+              placeholder="Type your beloved pet's name"
               value={petData.name}
               onChangeText={(text) => setPetData({ ...petData, name: text })}
               mode="outlined"
@@ -139,7 +145,10 @@ const EditPetScreen = () => {
             <SegmentedButtons
               value={petData.species}
               onValueChange={(value) =>
-                setPetData({ ...petData, species: value as "dog" | "cat" })
+                setPetData({
+                  ...petData,
+                  species: value as "dog" | "cat" | "fish",
+                })
               }
               buttons={[
                 {
@@ -166,7 +175,10 @@ const EditPetScreen = () => {
             <SegmentedButtons
               value={petData.gender}
               onValueChange={(value) =>
-                setPetData({ ...petData, gender: value as "male" | "female" })
+                setPetData({
+                  ...petData,
+                  gender: value as "male" | "female" | "unknown",
+                })
               }
               buttons={[
                 {
@@ -195,7 +207,7 @@ const EditPetScreen = () => {
               style={styles.dateButton}
             >
               <TextInput
-                label="Birth Date"
+                placeholder="Birth Date"
                 value={petData.birth_date || "Not set"}
                 mode="outlined"
                 editable={false}
@@ -223,18 +235,6 @@ const EditPetScreen = () => {
                 }}
               />
             )}
-
-            {/* Image URL Input */}
-            <TextInput
-              label="Image URL (optional)"
-              value={petData.image_url || ""}
-              onChangeText={(text) =>
-                setPetData({ ...petData, image_url: text })
-              }
-              mode="outlined"
-              style={styles.input}
-              left={<TextInput.Icon icon="image" />}
-            />
           </Card.Content>
         </Card>
 
@@ -281,10 +281,11 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
   label: {
-    fontSize: 16,
+    fontSize: 14,
     color: "#333",
-    marginTop: 16,
-    marginBottom: 8,
+    marginTop: 12,
+    marginBottom: 4,
+    fontWeight: "700",
   },
   segmentedButtons: {
     marginVertical: 8,
