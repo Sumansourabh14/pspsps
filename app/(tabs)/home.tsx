@@ -1,10 +1,10 @@
-import { FlatList, Pressable, StyleSheet } from "react-native";
-import EditButton from "@/components/buttons/EditButton";
+import AddButton from "@/components/buttons/AddButton";
 import { View } from "@/components/Themed";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/AuthProvider";
 import { Link } from "expo-router";
 import { useEffect, useState } from "react";
+import { FlatList, Pressable, StyleSheet } from "react-native";
 import { Card, Text } from "react-native-paper";
 
 interface Pet {
@@ -25,7 +25,6 @@ const PetCard = ({ pet }: { pet: Pet }) => {
     >
       <Pressable style={{ flex: 1 }}>
         <Card style={[styles.card]}>
-          <View style={{ alignItems: "center", padding: 20 }}></View>
           <Card.Content style={{ padding: 10 }}>
             <Text variant="titleMedium" style={{ fontWeight: "bold" }}>
               {pet.name}
@@ -84,14 +83,17 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <EditButton title={"Add new pet"} destination={`/add-a-pet`} />
-      <FlatList
-        data={pets}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => <PetCard pet={item} />}
-        numColumns={2}
-        ListEmptyComponent={<Text>No pets to display</Text>}
-      />
+      <View style={{ marginVertical: 10 }}>
+        <Text style={{ fontWeight: "700" }}>My Pets</Text>
+        <AddButton title={"Add new pet"} destination={`/add-a-pet`} />
+        <FlatList
+          data={pets}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => <PetCard pet={item} />}
+          numColumns={2}
+          ListEmptyComponent={<Text>No pets to display</Text>}
+        />
+      </View>
     </View>
   );
 }

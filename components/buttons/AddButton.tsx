@@ -3,14 +3,14 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { Button } from "react-native-paper";
 
-const EditButton = ({ title, destination }) => {
+const AddButton = ({ title, destination }) => {
   return (
     <Link href={destination} asChild>
       <Button
         mode="contained"
-        style={styles.editButton}
-        labelStyle={styles.editButtonLabel}
-        icon="pencil"
+        style={styles.addButton}
+        labelStyle={styles.addButtonLabel}
+        icon="plus"
       >
         {title}
       </Button>
@@ -18,17 +18,17 @@ const EditButton = ({ title, destination }) => {
   );
 };
 
-export default EditButton;
+export default AddButton;
 
 const styles = StyleSheet.create({
-  editButton: {
+  addButton: {
     marginVertical: 16,
     marginHorizontal: 8,
     borderRadius: 8,
     backgroundColor: "#6200ee",
     paddingVertical: 4,
   },
-  editButtonLabel: {
+  addButtonLabel: {
     fontSize: 16,
     fontWeight: "600",
   },
