@@ -1,10 +1,10 @@
-import { FlatList, Pressable, StyleSheet } from "react-native";
-import EditButton from "@/components/buttons/EditButton";
+import AddButton from "@/components/buttons/AddButton";
 import { View } from "@/components/Themed";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/AuthProvider";
 import { Link } from "expo-router";
 import { useEffect, useState } from "react";
+import { FlatList, Pressable, StyleSheet } from "react-native";
 import { Card, Text } from "react-native-paper";
 
 interface Pet {
@@ -86,7 +86,7 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <View style={{ marginVertical: 10 }}>
         <Text style={{ fontWeight: "700" }}>My Pets</Text>
-        <EditButton title={"Add new pet"} destination={`/add-a-pet`} />
+        <AddButton title={"Add new pet"} destination={`/add-a-pet`} />
         <FlatList
           data={pets}
           keyExtractor={(item) => item.id.toString()}
