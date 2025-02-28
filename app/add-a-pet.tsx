@@ -45,7 +45,7 @@ const genderItems = [
     id: "3",
     name: "Unknown",
     type: "unknown",
-    icon: "a",
+    icon: "help-circle-outline",
   },
 ];
 

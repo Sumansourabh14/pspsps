@@ -84,14 +84,17 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <EditButton title={"Add new pet"} destination={`/add-a-pet`} />
-      <FlatList
-        data={pets}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => <PetCard pet={item} />}
-        numColumns={2}
-        ListEmptyComponent={<Text>No pets to display</Text>}
-      />
+      <View style={{ marginVertical: 10 }}>
+        <Text style={{ fontWeight: "700" }}>My Pets</Text>
+        <EditButton title={"Add new pet"} destination={`/add-a-pet`} />
+        <FlatList
+          data={pets}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => <PetCard pet={item} />}
+          numColumns={2}
+          ListEmptyComponent={<Text>No pets to display</Text>}
+        />
+      </View>
     </View>
   );
 }

@@ -22,7 +22,8 @@ export default EditButton;
 
 const styles = StyleSheet.create({
   editButton: {
-    margin: 16,
+    marginVertical: 16,
+    marginHorizontal: 8,
     borderRadius: 8,
     backgroundColor: "#6200ee",
     paddingVertical: 4,

@@ -113,7 +113,6 @@ const PetScreen = () => {
   return (
     <>
       <Stack.Screen
-        name="[pet]"
         options={{ headerTitle: petData.name ? petData.name : "NA" }}
       />
       <ScrollView style={styles.container}>
