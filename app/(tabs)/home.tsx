@@ -25,7 +25,6 @@ const PetCard = ({ pet }: { pet: Pet }) => {
     >
       <Pressable style={{ flex: 1 }}>
         <Card style={[styles.card]}>
-          <View style={{ alignItems: "center", padding: 20 }}></View>
           <Card.Content style={{ padding: 10 }}>
             <Text variant="titleMedium" style={{ fontWeight: "bold" }}>
               {pet.name}
