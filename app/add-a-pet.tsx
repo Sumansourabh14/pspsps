@@ -168,9 +168,9 @@ export default function AddPetScreen() {
       gender,
     };
 
-    const { status, error } = await supabase.from("pets").upsert(updates);
+    const { status, error } = await supabase.from("pets").insert(updates);
 
-    if (status === 200 || status === 201) {
+    if (status === 201) {
       Alert.alert("Pet added successfully!");
       router.push("/");
     }

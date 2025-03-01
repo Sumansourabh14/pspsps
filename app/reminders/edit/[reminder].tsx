@@ -8,11 +8,26 @@ import {
   ScrollView,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import { supabase } from "../lib/supabase"; // Adjust path to your Supabase client setup
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Button, TextInput } from "react-native-paper";
-import { Stack } from "expo-router";
+import { Stack, useLocalSearchParams } from "expo-router";
 import { useAuth } from "@/providers/AuthProvider";
+import { supabase } from "@/lib/supabase";
+
+interface Reminder {
+  id: number; // Unique identifier for the reminder
+  pet_id: number;
+  title: string; // Short description of the reminder
+  type: string; // The task value (e.g., "deworming", "feeding_wet")
+  frequency: string; // Frequency value (e.g., "daily", "weekly")
+  start_date: Date; // When the reminder starts
+  next_due: Date; // When the next instance occurs
+  is_active: boolean; // Whether the reminder is currently active
+  notes?: string; // Optional additional notes
+  last_completed?: Date; // When it was last completed (optional)
+  interval?: number; // For custom frequency, interval in days (optional)
+  user_id: string;
+}
 
 // Enums from your schema
 enum ReminderType {
@@ -112,8 +127,8 @@ const frequencyOptions = [
   },
 ];
 
-const AddReminderScreen = () => {
-  // Separate state variables
+const EditReminderScreen = () => {
+  const [reminderData, setReminderData] = useState<Reminder | null>(null);
   const [petId, setPetId] = useState(null);
   const [type, setType] = useState<ReminderType>(ReminderType.FeedingWet);
   const [title, setTitle] = useState("");
@@ -125,40 +140,88 @@ const AddReminderScreen = () => {
 
   const [pets, setPets] = useState<Pet[] | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [saving, setSaving] = useState<boolean>(false);
 
+  const { id } = useLocalSearchParams();
   const { session } = useAuth();
 
-  const handleSave = async () => {
-    setLoading(true);
+  const handleUpdate = async () => {
+    setSaving(true);
 
-    const reminder = {
+    const updatedReminder = {
       pet_id: petId,
       type,
       title: title || `${type.replace("_", " ")} for pet`, // Default title
       frequency,
       interval: frequency === Frequency.Custom ? interval : null,
-      start_date: startDate.toISOString(),
+      start_date: startDate,
       last_completed: null, // Initially null
-      next_due: startDate.toISOString(), // Starts at startDate
+      next_due: startDate, // Starts at startDate
       notes: notes || null,
       is_active: true,
       user_id: session?.user.id,
     };
 
-    const { status, error } = await supabase
+    const { data, status, error } = await supabase
       .from("reminders")
-      .insert([reminder]);
+      .update(updatedReminder)
+      .eq("id", id);
 
     if (error) {
-      Alert.alert("Reminder could not be created. Please try again.");
+      Alert.alert("Reminder could not be updated. Please try again.");
     }
 
-    if (status === 201) {
-      Alert.alert("Success", "Reminder added successfully!");
+    if (status === 204) {
+      Alert.alert("Success", "Reminder updated successfully!");
     }
 
-    setLoading(false);
+    setSaving(false);
   };
+
+  // Fetch reminder data
+  useEffect(() => {
+    let mounted = true;
+
+    const fetchReminderById = async () => {
+      if (!session?.user.id || !id) return;
+
+      setLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from("reminders")
+          .select("*")
+          .eq("id", id)
+          .single();
+
+        if (mounted) {
+          if (error) throw error;
+          setReminderData(data);
+        }
+      } catch (error) {
+        console.error("Error fetching reminder data:", error);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+
+    fetchReminderById();
+
+    return () => {
+      mounted = false;
+    };
+  }, [id, session]);
+
+  useEffect(() => {
+    if (!!reminderData) {
+      setType(reminderData.type);
+      setTitle(reminderData.title);
+      setFrequency(reminderData.frequency);
+      setInterval(reminderData.interval);
+      setStartDate(reminderData.start_date);
+      setNotes(reminderData.notes);
+      setPetId(reminderData.pet_id);
+    }
+  }, [reminderData]);
 
   // fetch user pets
   useEffect(() => {
@@ -190,7 +253,7 @@ const AddReminderScreen = () => {
 
   return (
     <>
-      <Stack.Screen options={{ title: "Add Reminder" }} />
+      <Stack.Screen options={{ title: "Edit Reminder" }} />
       <ScrollView style={styles.container}>
         <Text style={styles.label}>For which pet?</Text>
         {pets && (
@@ -263,7 +326,7 @@ const AddReminderScreen = () => {
 
         {showDatePicker && (
           <DateTimePicker
-            value={startDate}
+            value={new Date(startDate)}
             mode="date"
             display="default"
             onChange={(event, date) => {
@@ -286,14 +349,14 @@ const AddReminderScreen = () => {
 
         <Button
           mode="contained"
-          onPress={handleSave}
+          onPress={handleUpdate}
           style={styles.saveButton}
           labelStyle={styles.saveButtonLabel}
           icon="content-save"
-          disabled={loading}
-          loading={loading}
+          disabled={saving}
+          loading={saving}
         >
-          {loading ? "Saving..." : "Save Changes"}
+          {saving ? "Updating..." : "Update Changes"}
         </Button>
       </ScrollView>
     </>
@@ -342,4 +405,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddReminderScreen;
+export default EditReminderScreen;

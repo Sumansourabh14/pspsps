@@ -28,24 +28,24 @@ interface Reminder {
 
 const ReminderCard = ({ reminder }: { reminder: Reminder }) => {
   return (
-    // <Link
-    //   href={{
-    //     pathname: "/pets/[pet]",
-    //     params: { id: pet.id },
-    //   }}
-    //   asChild
-    // >
-    <Pressable style={{ flex: 1 }}>
-      <Card style={[styles.card]}>
-        <Card.Content style={{ padding: 10 }}>
-          <Text variant="titleMedium" style={{ fontWeight: "bold" }}>
-            {reminder.title}
-          </Text>
-          <Text variant="titleSmall">{reminder.notes}</Text>
-        </Card.Content>
-      </Card>
-    </Pressable>
-    // </Link>
+    <Link
+      href={{
+        pathname: "/reminders/[reminder]",
+        params: { id: reminder.id },
+      }}
+      asChild
+    >
+      <Pressable style={{ flex: 1 }}>
+        <Card style={[styles.card]}>
+          <Card.Content style={{ padding: 10 }}>
+            <Text variant="titleMedium" style={{ fontWeight: "bold" }}>
+              {reminder.title}
+            </Text>
+            <Text variant="titleSmall">{reminder.notes}</Text>
+          </Card.Content>
+        </Card>
+      </Pressable>
+    </Link>
   );
 };
 
@@ -82,8 +82,6 @@ export default function RemindersScreen() {
       mounted = false;
     };
   }, [session]);
-
-  console.log({ reminders });
 
   if (loading) {
     return <ActivityIndicator />;

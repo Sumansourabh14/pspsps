@@ -36,8 +36,6 @@ const EditPetScreen = () => {
   const { id } = useLocalSearchParams();
   const { session } = useAuth();
 
-  console.log({ id });
-
   // Fetch pet data
   useEffect(() => {
     let mounted = true;
