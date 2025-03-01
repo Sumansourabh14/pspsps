@@ -129,6 +129,8 @@ const AddReminderScreen = () => {
   const { session } = useAuth();
 
   const handleSave = async () => {
+    setLoading(true);
+
     const reminder = {
       pet_id: petId,
       type,
@@ -154,6 +156,8 @@ const AddReminderScreen = () => {
     if (status === 201) {
       Alert.alert("Success", "Reminder added successfully!");
     }
+
+    setLoading(false);
   };
 
   // fetch user pets
@@ -163,7 +167,6 @@ const AddReminderScreen = () => {
     const fetchUserPets = async () => {
       if (!session?.user.id) return;
 
-      setLoading(true);
       const { data, error } = await supabase
         .from("pets")
         .select("*")
@@ -175,7 +178,6 @@ const AddReminderScreen = () => {
         } else {
           setPets(data);
         }
-        setLoading(false);
       }
     };
 
@@ -287,11 +289,11 @@ const AddReminderScreen = () => {
           onPress={handleSave}
           style={styles.saveButton}
           labelStyle={styles.saveButtonLabel}
-          //   loading={saving}
-          //   disabled={saving}
           icon="content-save"
+          disabled={loading}
+          loading={loading}
         >
-          Save Changes
+          {loading ? "Saving..." : "Save Changes"}
         </Button>
       </ScrollView>
     </>
