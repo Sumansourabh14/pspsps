@@ -83,8 +83,6 @@ export default function RemindersScreen() {
     };
   }, [session]);
 
-  console.log({ reminders });
-
   if (loading) {
     return <ActivityIndicator />;
   }
