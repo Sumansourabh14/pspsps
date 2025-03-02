@@ -107,6 +107,11 @@ const frequencyOptions = [
   },
   {
     id: 5,
+    label: "Once",
+    value: "once",
+  },
+  {
+    id: 6,
     label: "Custom",
     value: "custom",
   },
