@@ -258,7 +258,7 @@ const AddReminderScreen = () => {
         <TouchableOpacity onPress={() => setShowDatePicker(true)}>
           <TextInput
             placeholder="Start Date"
-            value={startDate.toLocaleString() || "Not set"}
+            value={startDate.toLocaleDateString() || "Not set"}
             mode="outlined"
             editable={false}
             style={styles.input}
