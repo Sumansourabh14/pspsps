@@ -126,14 +126,22 @@ const AddReminderScreen = () => {
   const [interval, setInterval] = useState<number | undefined>(undefined);
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
+  const [time, setTime] = useState(new Date());
   const [notes, setNotes] = useState("");
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showEndDatePicker, setShowEndDatePicker] = useState(false);
+  const [showTimePicker, setShowTimePicker] = useState(false);
 
   const [pets, setPets] = useState<Pet[] | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
   const { session } = useAuth();
+
+  const formatTimeForSupabase = (date: Date): string => {
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    return `${hours}:${minutes}:00`; // Always include seconds for time type
+  };
 
   const handleSave = async () => {
     setLoading(true);
@@ -146,6 +154,7 @@ const AddReminderScreen = () => {
       interval: frequency === Frequency.Custom ? interval : null,
       start_date: startDate.toISOString(),
       end_date: endDate.toISOString(),
+      time: formatTimeForSupabase(time),
       last_completed: null, // Initially null
       next_due: startDate.toISOString(), // Starts at startDate
       notes: notes || null,
@@ -160,6 +169,7 @@ const AddReminderScreen = () => {
       .insert([reminder]);
 
     if (error) {
+      console.log({ error });
       Alert.alert("Reminder could not be created. Please try again.");
     }
 
@@ -306,6 +316,32 @@ const AddReminderScreen = () => {
               setShowEndDatePicker(false);
               if (date) {
                 setEndDate(date);
+              }
+            }}
+          />
+        )}
+
+        <Text style={styles.label}>Set Time</Text>
+        <TouchableOpacity onPress={() => setShowTimePicker(true)}>
+          <TextInput
+            placeholder="Set time"
+            value={time.toLocaleTimeString()}
+            mode="outlined"
+            editable={false}
+            style={styles.input}
+            left={<TextInput.Icon icon="calendar" />}
+          />
+        </TouchableOpacity>
+
+        {showTimePicker && (
+          <DateTimePicker
+            value={time}
+            mode="time"
+            display="spinner"
+            onChange={(event, selectedDate) => {
+              setShowTimePicker(false);
+              if (selectedDate) {
+                setTime(selectedDate);
               }
             }}
           />
