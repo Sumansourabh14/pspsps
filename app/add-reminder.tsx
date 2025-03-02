@@ -125,8 +125,10 @@ const AddReminderScreen = () => {
   const [frequency, setFrequency] = useState<Frequency>(Frequency.Daily);
   const [interval, setInterval] = useState<number | undefined>(undefined);
   const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
   const [notes, setNotes] = useState("");
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showEndDatePicker, setShowEndDatePicker] = useState(false);
 
   const [pets, setPets] = useState<Pet[] | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -143,12 +145,15 @@ const AddReminderScreen = () => {
       frequency,
       interval: frequency === Frequency.Custom ? interval : null,
       start_date: startDate.toISOString(),
+      end_date: endDate.toISOString(),
       last_completed: null, // Initially null
       next_due: startDate.toISOString(), // Starts at startDate
       notes: notes || null,
       is_active: true,
       user_id: session?.user.id,
     };
+
+    console.log({ reminder });
 
     const { status, error } = await supabase
       .from("reminders")
@@ -254,7 +259,7 @@ const AddReminderScreen = () => {
           </>
         )}
 
-        <Text style={styles.label}>Start Date & Time</Text>
+        <Text style={styles.label}>Start Date</Text>
         <TouchableOpacity onPress={() => setShowDatePicker(true)}>
           <TextInput
             placeholder="Start Date"
@@ -275,6 +280,32 @@ const AddReminderScreen = () => {
               setShowDatePicker(false);
               if (date) {
                 setStartDate(date);
+              }
+            }}
+          />
+        )}
+
+        <Text style={styles.label}>End Date</Text>
+        <TouchableOpacity onPress={() => setShowEndDatePicker(true)}>
+          <TextInput
+            placeholder="End Date"
+            value={endDate.toLocaleDateString() || "Not set"}
+            mode="outlined"
+            editable={false}
+            style={styles.input}
+            left={<TextInput.Icon icon="calendar" />}
+          />
+        </TouchableOpacity>
+
+        {showEndDatePicker && (
+          <DateTimePicker
+            value={endDate}
+            mode="date"
+            display="default"
+            onChange={(event, date) => {
+              setShowEndDatePicker(false);
+              if (date) {
+                setEndDate(date);
               }
             }}
           />
