@@ -32,6 +32,7 @@ enum Frequency {
   Monthly = "monthly",
   Yearly = "yearly",
   Custom = "custom",
+  Once = "once",
 }
 
 interface Pet {
@@ -269,7 +270,9 @@ const AddReminderScreen = () => {
           </>
         )}
 
-        <Text style={styles.label}>Start Date</Text>
+        <Text style={styles.label}>{`${
+          frequency === Frequency.Once ? `Date` : `Start Date`
+        }`}</Text>
         <TouchableOpacity onPress={() => setShowDatePicker(true)}>
           <TextInput
             placeholder="Start Date"
@@ -295,30 +298,34 @@ const AddReminderScreen = () => {
           />
         )}
 
-        <Text style={styles.label}>End Date</Text>
-        <TouchableOpacity onPress={() => setShowEndDatePicker(true)}>
-          <TextInput
-            placeholder="End Date"
-            value={endDate.toLocaleDateString() || "Not set"}
-            mode="outlined"
-            editable={false}
-            style={styles.input}
-            left={<TextInput.Icon icon="calendar" />}
-          />
-        </TouchableOpacity>
+        {frequency !== Frequency.Once && (
+          <>
+            <Text style={styles.label}>End Date</Text>
+            <TouchableOpacity onPress={() => setShowEndDatePicker(true)}>
+              <TextInput
+                placeholder="End Date"
+                value={endDate.toLocaleDateString() || "Not set"}
+                mode="outlined"
+                editable={false}
+                style={styles.input}
+                left={<TextInput.Icon icon="calendar" />}
+              />
+            </TouchableOpacity>
 
-        {showEndDatePicker && (
-          <DateTimePicker
-            value={endDate}
-            mode="date"
-            display="default"
-            onChange={(event, date) => {
-              setShowEndDatePicker(false);
-              if (date) {
-                setEndDate(date);
-              }
-            }}
-          />
+            {showEndDatePicker && (
+              <DateTimePicker
+                value={endDate}
+                mode="date"
+                display="default"
+                onChange={(event, date) => {
+                  setShowEndDatePicker(false);
+                  if (date) {
+                    setEndDate(date);
+                  }
+                }}
+              />
+            )}
+          </>
         )}
 
         <Text style={styles.label}>Set Time</Text>
