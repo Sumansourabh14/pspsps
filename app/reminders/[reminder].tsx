@@ -11,6 +11,8 @@ interface Reminder {
   type: string; // The task value (e.g., "deworming", "feeding_wet")
   frequency: string; // Frequency value (e.g., "daily", "weekly")
   start_date: string; // When the reminder starts
+  end_date: string; // When the reminder starts
+  time: string;
   next_due: string; // When the next instance occurs
   is_active: boolean; // Whether the reminder is currently active
   notes?: string; // Optional additional notes
@@ -126,6 +128,9 @@ const ReminderScreen = () => {
         <Text style={styles.label}>Reminder Type</Text>
         {!!reminder && <Text>{reminder.type}</Text>}
 
+        <Text style={styles.label}>Title</Text>
+        {!!reminder && <Text>{reminder.title}</Text>}
+
         <Text style={styles.label}>Frequency</Text>
         {!!reminder && reminder.frequency === "custom" ? (
           <Text>Interval: {reminder.interval} days</Text>
@@ -133,8 +138,17 @@ const ReminderScreen = () => {
           <Text>{reminder.frequency}</Text>
         )}
 
-        <Text style={styles.label}>Start Date & Time</Text>
+        <Text style={styles.label}>{`${
+          reminder.frequency === "once" ? `Date` : `Start Date`
+        }`}</Text>
         {!!reminder && <Text>{reminder.start_date}</Text>}
+
+        {reminder.frequency !== "once" && (
+          <>
+            <Text style={styles.label}>End Date</Text>
+            {!!reminder && <Text>{reminder.end_date}</Text>}
+          </>
+        )}
 
         <Text style={styles.label}>Notes</Text>
         {!!reminder && <Text>{reminder.notes}</Text>}
