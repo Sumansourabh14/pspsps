@@ -1,8 +1,8 @@
 import { registerForPushNotificationsAsync } from "@/lib/notifications";
-import { PropsWithChildren, useEffect, useRef, useState } from "react";
-import * as Notifications from "expo-notifications";
-import { useAuth } from "./AuthProvider";
 import { supabase } from "@/lib/supabase";
+import * as Notifications from "expo-notifications";
+import { PropsWithChildren, useEffect, useRef, useState } from "react";
+import { useAuth } from "./AuthProvider";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
