@@ -1,11 +1,20 @@
+import Colors from "@/constants/Colors";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/AuthProvider";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import { router } from "expo-router";
 import React, { useState } from "react";
-import { Alert, FlatList, Pressable, StyleSheet, View } from "react-native";
+import {
+  Alert,
+  FlatList,
+  Image,
+  Pressable,
+  StyleSheet,
+  View,
+} from "react-native";
 import { Button, Card, Text, TextInput } from "react-native-paper";
+import * as ImagePicker from "expo-image-picker";
 
 const pets = [
   {
@@ -136,6 +145,9 @@ export default function AddPetScreen() {
   const [selectedPet, setSelectedPet] = useState<string | null>(null);
   const [selectedGender, setSelectedGender] = useState<string | null>(null);
   const [selectedChoice, setSelectedChoice] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<string | undefined>(
+    undefined
+  );
 
   const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState("date");
@@ -180,6 +192,21 @@ export default function AddPetScreen() {
     }
 
     setLoading(false);
+  };
+
+  const pickImageAsync = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      console.log(result);
+      setSelectedImage(result.assets[0].uri);
+    } else {
+      alert("You did not select any image.");
+    }
   };
 
   return (
@@ -312,6 +339,59 @@ export default function AddPetScreen() {
         <>
           <View style={{ alignItems: "center", marginBottom: 20 }}>
             <Text style={{ fontWeight: "bold", marginTop: 10, fontSize: 24 }}>
+              Add an image of {!!name ? name : `your ${species}`}
+            </Text>
+          </View>
+          <View style={{ padding: 10 }}>
+            <Image
+              source={require("@/assets/images/dog-with-flower.jpg")}
+              style={styles.image}
+            />
+          </View>
+          <Pressable onPress={pickImageAsync}>
+            <Text
+              style={{
+                fontWeight: "bold",
+                marginVertical: 10,
+                fontSize: 16,
+                alignSelf: "center",
+                color: Colors.light.tint,
+              }}
+            >
+              Select image
+            </Text>
+          </Pressable>
+          <Button
+            onPress={() => setCurrent(4)}
+            mode="contained"
+            style={{
+              marginTop: 16,
+              paddingVertical: 8,
+              borderRadius: 50,
+            }}
+            labelStyle={{ fontSize: 18, fontWeight: "bold" }}
+          >
+            Skip
+          </Button>
+          <Button
+            onPress={() => setCurrent(4)}
+            mode="contained"
+            style={{
+              marginTop: 16,
+              paddingVertical: 8,
+              borderRadius: 50,
+            }}
+            labelStyle={{ fontSize: 18, fontWeight: "bold" }}
+            disabled={!species}
+          >
+            Continue
+          </Button>
+        </>
+      )}
+      {current === 4 && (
+        <>
+          <View style={{ alignItems: "center", marginBottom: 20 }}>
+            <Text style={{ fontWeight: "bold", marginTop: 10, fontSize: 24 }}>
               Do you know the age of {!!name ? name : `your ${species}`}?
             </Text>
           </View>
@@ -418,4 +498,9 @@ const styles = StyleSheet.create({
     margin: 5,
   },
   card: { flex: 1, margin: 10, borderRadius: 12, elevation: 4, borderWidth: 0 },
+  image: {
+    height: 200,
+    aspectRatio: 1,
+    alignSelf: "center",
+  },
 });
