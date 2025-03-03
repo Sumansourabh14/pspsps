@@ -1,3 +1,4 @@
+import RemoteImage from "@/components/images/RemoteImage";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/AuthProvider";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
@@ -14,7 +15,7 @@ interface Pet {
   gender: "male" | "female" | "unknown";
   birth_date?: string; // ISO date string (e.g., "2020-05-15")
   age?: number;
-  image_url?: string;
+  avatar?: string;
 }
 
 const PetScreen = () => {
@@ -118,12 +119,8 @@ const PetScreen = () => {
       <ScrollView style={styles.container}>
         {/* Pet Image Header */}
         <View style={styles.imageContainer}>
-          {petData.image_url ? (
-            <Image
-              source={{ uri: petData.image_url }}
-              style={styles.petImage}
-              resizeMode="cover"
-            />
+          {petData.avatar ? (
+            <RemoteImage path={petData.avatar} resizeMode="cover" />
           ) : (
             <Avatar.Icon
               size={150}
