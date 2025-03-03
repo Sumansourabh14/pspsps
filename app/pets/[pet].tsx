@@ -4,7 +4,7 @@ import { useAuth } from "@/providers/AuthProvider";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { Link, router, Stack, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Alert, Image, ScrollView, StyleSheet, View } from "react-native";
+import { Alert, ScrollView, StyleSheet, View } from "react-native";
 import { Avatar, Button, Card, Text } from "react-native-paper";
 
 interface Pet {
@@ -13,7 +13,7 @@ interface Pet {
   name: string;
   species: "dog" | "cat" | "fish";
   gender: "male" | "female" | "unknown";
-  birth_date?: string; // ISO date string (e.g., "2020-05-15")
+  birth_date?: string;
   age?: number;
   avatar?: string;
 }
@@ -36,7 +36,7 @@ const PetScreen = () => {
           .from("pets")
           .select("*")
           .eq("id", id)
-          .single(); // Use single() since we're expecting one record
+          .single();
 
         if (mounted) {
           if (error) throw error;
@@ -57,7 +57,6 @@ const PetScreen = () => {
     };
   }, [id, session]);
 
-  // Calculate age from DOB
   const calculateAge = (dob?: string): string => {
     if (!dob) return "Unknown age";
     const birthDate = new Date(dob);
@@ -117,10 +116,13 @@ const PetScreen = () => {
         options={{ headerTitle: petData.name ? petData.name : "NA" }}
       />
       <ScrollView style={styles.container}>
-        {/* Pet Image Header */}
         <View style={styles.imageContainer}>
           {petData.avatar ? (
-            <RemoteImage path={petData.avatar} resizeMode="cover" />
+            <RemoteImage
+              path={petData.avatar}
+              resizeMode="cover"
+              style={styles.petImage}
+            />
           ) : (
             <Avatar.Icon
               size={150}
@@ -143,10 +145,9 @@ const PetScreen = () => {
           )}
         </View>
 
-        {/* Pet Info Card */}
-        <Card style={styles.infoCard}>
-          <Card.Content>
-            <View style={styles.infoRow}>
+        <View style={styles.infoCard}>
+          <View style={styles.infoGrid}>
+            <View style={styles.infoItem}>
               <FontAwesome5
                 name={
                   petData.species === "dog"
@@ -156,15 +157,16 @@ const PetScreen = () => {
                     : petData.species === "fish" && "fish"
                 }
                 size={24}
-                color="#666"
+                color="#4CAF50"
               />
-              <Text style={styles.infoText}>
+              <Text style={styles.infoLabel}>Species</Text>
+              <Text style={styles.infoValue}>
                 {petData.species.charAt(0).toUpperCase() +
                   petData.species.slice(1)}
               </Text>
             </View>
 
-            <View style={styles.infoRow}>
+            <View style={styles.infoItem}>
               <Ionicons
                 name={
                   petData.gender === "male"
@@ -174,33 +176,35 @@ const PetScreen = () => {
                     : petData.gender === "unknown" && "help"
                 }
                 size={24}
-                color="#666"
+                color="#4CAF50"
               />
-              <Text style={styles.infoText}>
+              <Text style={styles.infoLabel}>Gender</Text>
+              <Text style={styles.infoValue}>
                 {petData.gender.charAt(0).toUpperCase() +
                   petData.gender.slice(1)}
               </Text>
             </View>
 
-            <View style={styles.infoRow}>
-              <Ionicons name="calendar" size={24} color="#666" />
-              <Text style={styles.infoText}>
+            <View style={styles.infoItem}>
+              <Ionicons name="calendar" size={24} color="#4CAF50" />
+              <Text style={styles.infoLabel}>Age</Text>
+              <Text style={styles.infoValue}>
                 {petData.birth_date
-                  ? `${calculateAge(petData.birth_date)} old`
-                  : "Age unknown"}
+                  ? calculateAge(petData.birth_date)
+                  : "Unknown"}
               </Text>
             </View>
 
-            <View style={styles.infoRow}>
-              <Ionicons name="calendar-number" size={24} color="#666" />
-              <Text style={styles.infoText}>
-                {petData.birth_date ? `${petData.birth_date}` : "DOB unknown"}
+            <View style={styles.infoItem}>
+              <Ionicons name="calendar-number" size={24} color="#4CAF50" />
+              <Text style={styles.infoLabel}>DOB</Text>
+              <Text style={styles.infoValue}>
+                {petData.birth_date ? petData.birth_date : "Unknown"}
               </Text>
             </View>
-          </Card.Content>
-        </Card>
+          </View>
+        </View>
 
-        {/* Edit Button */}
         <Link
           href={{
             pathname: "/pets/edit/[pet]",
@@ -237,21 +241,29 @@ export default PetScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#F5F6F5",
   },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#F5F6F5",
   },
   loadingText: {
-    fontSize: 16,
+    fontSize: 18,
     color: "#666",
+    fontStyle: "italic",
   },
   imageContainer: {
     position: "relative",
     height: 300,
     backgroundColor: "#e0e0e0",
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 6,
   },
   petImage: {
     width: "100%",
@@ -263,49 +275,98 @@ const styles = StyleSheet.create({
     left: "50%",
     transform: [{ translateX: -75 }, { translateY: -75 }],
     backgroundColor: "#ddd",
+    borderRadius: 75,
+    borderWidth: 3,
+    borderColor: "#fff",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5,
   },
   nameOverlay: {
     position: "absolute",
     bottom: 20,
     left: 20,
-    backgroundColor: "rgba(0, 0, 0, 0.6)",
-    padding: 10,
-    borderRadius: 8,
+    backgroundColor: "rgba(76, 175, 80, 0.9)",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
   },
   petName: {
-    color: "white",
+    color: "#fff",
     fontWeight: "bold",
+    textShadowColor: "rgba(0, 0, 0, 0.3)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   infoCard: {
-    margin: 16,
-    borderRadius: 12,
-    elevation: 4,
-    backgroundColor: "white",
+    paddingHorizontal: 16,
+    paddingVertical: 10,
   },
-  infoRow: {
+  infoGrid: {
     flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+  },
+  infoItem: {
+    width: "48%", // Two columns with slight spacing
     alignItems: "center",
     marginVertical: 12,
+    padding: 10,
+    backgroundColor: "#fafafa",
+    borderRadius: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 2,
   },
-  infoText: {
-    marginLeft: 12,
+  infoLabel: {
+    fontSize: 12,
+    color: "#666",
+    marginTop: 8,
+    fontWeight: "500",
+    textAlign: "center",
+  },
+  infoValue: {
     fontSize: 16,
     color: "#333",
+    marginTop: 4,
+    fontWeight: "600",
+    textAlign: "center",
   },
   editButton: {
-    margin: 16,
+    marginHorizontal: 16,
+    marginTop: 20,
     borderRadius: 8,
-    backgroundColor: "#6200ee",
-    paddingVertical: 4,
+    backgroundColor: "#4CAF50",
+    paddingVertical: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5,
   },
   editButtonLabel: {
     fontSize: 16,
     fontWeight: "600",
+    color: "#fff",
   },
   deleteButton: {
     marginHorizontal: 16,
+    marginVertical: 12,
     borderRadius: 8,
-    backgroundColor: "darkred",
-    paddingVertical: 4,
+    backgroundColor: "#D32F2F",
+    paddingVertical: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5,
   },
 });
