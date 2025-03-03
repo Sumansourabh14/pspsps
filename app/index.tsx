@@ -10,13 +10,17 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import Animated, { FadeInDown } from "react-native-reanimated";
+import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
 
 const WelcomeScreen = () => {
   const { session, loading } = useAuth();
 
   if (loading) {
-    return <ActivityIndicator />;
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#4CAF50" />
+      </View>
+    );
   }
 
   if (!!session) {
@@ -27,106 +31,171 @@ const WelcomeScreen = () => {
     <>
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <ImageBackground
-        source={require("@/assets/images/dog-with-flower.jpg")}
-        style={{ flex: 1 }}
+        source={{
+          uri: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80",
+        }}
+        style={styles.background}
         resizeMode="cover"
       >
-        <View style={styles.container}>
-          <LinearGradient
-            colors={[
-              "transparent",
-              "rgba(255,255,255,0.7)",
-              "rgba(255,255,255,1)",
-            ]}
-            style={styles.background}
-          >
-            <Animated.View entering={FadeInDown.delay(300).duration(500)}>
-              <View style={styles.wrapper}>
-                <Text style={styles.title}>pspsps</Text>
-                <Text style={styles.description}>
-                  Your pet's 2nd best friend
+        <LinearGradient
+          colors={["rgba(0,0,0,0.4)", "rgba(0,0,0,0.7)"]}
+          style={styles.gradientOverlay}
+        >
+          <View style={styles.container}>
+            {/* Header Section */}
+            <Animated.View entering={FadeInUp.delay(200).duration(600)}>
+              <View style={styles.header}>
+                <Ionicons
+                  name="paw"
+                  size={80}
+                  color="#fff"
+                  style={styles.pawIcon}
+                />
+                <Text style={styles.title}>PetPal</Text>
+                <Text style={styles.subtitle}>
+                  Your Pet's Ultimate Companion
                 </Text>
-                <View style={styles.socialLoginButtons}>
-                  <Link href={"/onboarding"} asChild>
-                    <TouchableOpacity style={styles.btn}>
-                      <Text style={styles.btnText}>Onboarding</Text>
-                    </TouchableOpacity>
+              </View>
+            </Animated.View>
+
+            {/* Action Section */}
+            <Animated.View entering={FadeInDown.delay(400).duration(600)}>
+              <View style={styles.actionContainer}>
+                <Link href={"/onboarding"} asChild>
+                  <TouchableOpacity style={styles.primaryButton}>
+                    <Text style={styles.buttonText}>Get Started</Text>
+                  </TouchableOpacity>
+                </Link>
+
+                <Link href={"/sign-up"} asChild>
+                  <TouchableOpacity style={styles.secondaryButton}>
+                    <Ionicons name="mail-outline" size={20} color="#4CAF50" />
+                    <Text style={styles.secondaryButtonText}>
+                      Sign Up with Email
+                    </Text>
+                  </TouchableOpacity>
+                </Link>
+
+                <View style={styles.signinContainer}>
+                  <Text style={styles.signinText}>Already a member? </Text>
+                  <Link href={"/sign-in"} style={styles.signinLink}>
+                    Sign In
                   </Link>
-                  <Link href={"/sign-up"} asChild>
-                    <TouchableOpacity style={styles.btn}>
-                      <Ionicons name="mail-outline" size={20} />
-                      <Text style={styles.btnText}>Continue with email</Text>
-                    </TouchableOpacity>
-                  </Link>
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <Text>Already have an account? </Text>
-                    <Link href={"/sign-in"} style={{ fontWeight: "bold" }}>
-                      Sign in
-                    </Link>
-                  </View>
                 </View>
               </View>
             </Animated.View>
-          </LinearGradient>
-        </View>
+          </View>
+        </LinearGradient>
       </ImageBackground>
     </>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-  },
   background: {
     flex: 1,
-    position: "absolute",
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-    justifyContent: "flex-end",
+    width: "100%",
+    height: "100%",
   },
-  wrapper: {
-    paddingBottom: 40,
-    alignItems: "center",
+  gradientOverlay: {
+    flex: 1,
+    justifyContent: "space-between",
+  },
+  container: {
+    flex: 1,
     paddingHorizontal: 24,
+    paddingTop: 60,
+    paddingBottom: 40,
+    justifyContent: "space-between",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#fff",
+  },
+  header: {
+    alignItems: "center",
+    marginTop: 40,
+  },
+  pawIcon: {
+    textShadowColor: "rgba(0, 0, 0, 0.3)",
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 5,
   },
   title: {
-    fontSize: 60,
-    fontWeight: "100",
-    marginBottom: 10,
-    color: "darkblue",
+    fontSize: 48,
+    fontWeight: "bold",
+    color: "#fff",
+    letterSpacing: 1,
+    textShadowColor: "rgba(0, 0, 0, 0.4)",
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 8,
   },
-  description: {
-    fontSize: 16,
-    marginBottom: 20,
+  subtitle: {
+    fontSize: 18,
+    color: "#fff",
+    opacity: 0.9,
+    marginTop: 10,
+    textAlign: "center",
+    fontWeight: "300",
   },
-  socialLoginButtons: {
-    alignSelf: "stretch",
+  actionContainer: {
+    backgroundColor: "rgba(255, 255, 255, 0.95)",
+    borderRadius: 8,
+    padding: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    elevation: 8,
   },
-  btn: {
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: "gray",
-    borderStyle: "solid",
-    borderRadius: 25,
-    padding: 10,
-    marginBottom: 20,
+  primaryButton: {
+    backgroundColor: "#4CAF50",
+    borderRadius: 8,
+    paddingVertical: 14,
+    alignItems: "center",
+    marginBottom: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  secondaryButton: {
+    borderWidth: 2,
+    borderColor: "#4CAF50",
+    borderRadius: 8,
+    paddingVertical: 12,
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    gap: 6,
+    gap: 8,
+    marginBottom: 20,
   },
-  btnText: {
-    textAlign: "center",
-    fontSize: 14,
+  secondaryButtonText: {
+    color: "#4CAF50",
+    fontSize: 16,
     fontWeight: "600",
+  },
+  signinContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  signinText: {
+    fontSize: 14,
+    color: "#666",
+  },
+  signinLink: {
+    fontSize: 14,
+    color: "#4CAF50",
+    fontWeight: "bold",
   },
 });
 
