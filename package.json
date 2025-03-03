@@ -19,10 +19,16 @@
     "@react-native-picker/picker": "^2.11.0",
     "@react-navigation/native": "^7.0.14",
     "@supabase/supabase-js": "^2.49.1",
+    "base64-arraybuffer": "^1.0.2",
     "expo": "~52.0.37",
+    "expo-constants": "~17.0.7",
+    "expo-device": "~7.0.2",
+    "expo-file-system": "~18.0.11",
     "expo-font": "~13.0.4",
+    "expo-image-picker": "~16.0.6",
     "expo-linear-gradient": "~14.0.2",
     "expo-linking": "~7.0.5",
+    "expo-notifications": "~0.29.13",
     "expo-router": "~4.0.17",
     "expo-splash-screen": "~0.29.22",
     "expo-status-bar": "~2.0.1",
@@ -36,9 +42,7 @@
     "react-native-safe-area-context": "4.12.0",
     "react-native-screens": "~4.4.0",
     "react-native-web": "~0.19.13",
-    "expo-notifications": "~0.29.13",
-    "expo-device": "~7.0.2",
-    "expo-constants": "~17.0.7"
+    "expo-crypto": "~14.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

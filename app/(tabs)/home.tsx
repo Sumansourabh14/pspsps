@@ -12,6 +12,7 @@ interface Pet {
   user_id: string;
   name: string;
   species: string;
+  avatar: string;
 }
 
 const PetCard = ({ pet }: { pet: Pet }) => {

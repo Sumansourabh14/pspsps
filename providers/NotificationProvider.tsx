@@ -19,7 +19,6 @@ async function fetchReminders(userId: string) {
     .eq("user_id", userId);
 
   if (error) {
-    console.error(error.message);
     return;
   }
 
@@ -74,12 +73,12 @@ async function scheduleRecurringNotifications(userId: string) {
       // For same-day notifications, allow if time is in the future
       const isSameDay = triggerDate.toDateString() === now.toDateString();
       if (triggerDate < now && !isSameDay) {
-        console.log(`Skipping ${reminder.title} - date is in the past`);
+        // console.log(`Skipping ${reminder.title} - date is in the past`);
         continue;
       }
 
       try {
-        console.log(`triggerDate.getTime()-----------`, triggerDate.getTime());
+        // console.log(`triggerDate.getTime()-----------`, triggerDate.getTime());
         const notificationId = await Notifications.scheduleNotificationAsync({
           content: {
             title: reminder.title,
@@ -96,24 +95,22 @@ async function scheduleRecurringNotifications(userId: string) {
         });
 
         scheduledIds.push(notificationId);
-        console.log(
-          `Scheduled "${reminder.title}" for ${triggerDate} with ID: ${notificationId}`
-        );
+        // console.log(
+        //   `Scheduled "${reminder.title}" for ${triggerDate} with ID: ${notificationId}`
+        // );
       } catch (e) {
-        console.error(`Failed to schedule ${reminder.title}:`, e);
+        // console.error(`Failed to schedule ${reminder.title}:`, e);
         continue;
       }
     }
 
-    console.log({ scheduledIds });
-
     // Verify all scheduled notifications
     const scheduled = await Notifications.getAllScheduledNotificationsAsync();
-    console.log("Currently scheduled notifications:", scheduled);
+    // console.log("Currently scheduled notifications:", scheduled);
 
     return scheduledIds;
   } catch (error) {
-    console.error("Error scheduling notifications:", error);
+    // console.error("Error scheduling notifications:", error);
     throw error;
   }
 }
@@ -140,12 +137,12 @@ const NotificationProvider = ({ children }: PropsWithChildren) => {
       .eq("id", session?.user.id);
 
     if (status === 204) {
-      console.log(`ExponentPushToken added to user`);
+      // console.log(`ExponentPushToken added to user`);
     }
   };
 
   useEffect(() => {
-    console.warn("NotificationProvider init");
+    // console.warn("NotificationProvider init");
 
     registerForPushNotificationsAsync()
       .then((token) => savePushToken(token))
