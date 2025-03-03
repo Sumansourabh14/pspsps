@@ -343,10 +343,14 @@ export default function AddPetScreen() {
             </Text>
           </View>
           <View style={{ padding: 10 }}>
-            <Image
-              source={require("@/assets/images/dog-with-flower.jpg")}
-              style={styles.image}
-            />
+            {!!selectedImage ? (
+              <Image source={{ uri: selectedImage }} style={styles.image} />
+            ) : (
+              <Image
+                source={require("@/assets/images/dog-with-flower.jpg")}
+                style={styles.image}
+              />
+            )}
           </View>
           <Pressable onPress={pickImageAsync}>
             <Text
