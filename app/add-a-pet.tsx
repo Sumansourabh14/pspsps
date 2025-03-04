@@ -20,58 +20,25 @@ import { decode } from "base64-arraybuffer";
 import { randomUUID } from "expo-crypto";
 
 const pets = [
-  {
-    id: "1",
-    name: "Cat",
-    type: "cat",
-    icon: "cat",
-  },
-  {
-    id: "2",
-    name: "Dog",
-    type: "dog",
-    icon: "dog",
-  },
-  {
-    id: "3",
-    name: "Fish",
-    type: "fish",
-    icon: "fish",
-  },
+  { id: "1", name: "Cat", type: "cat", icon: "cat" },
+  { id: "2", name: "Dog", type: "dog", icon: "dog" },
+  { id: "3", name: "Fish", type: "fish", icon: "fish" },
 ];
 
 const genderItems = [
-  {
-    id: "1",
-    name: "Female",
-    type: "female",
-    icon: "female",
-  },
-  {
-    id: "2",
-    name: "Male",
-    type: "male",
-    icon: "male",
-  },
+  { id: "1", name: "Female", type: "female", icon: "female" },
+  { id: "2", name: "Male", type: "male", icon: "male" },
   {
     id: "3",
-    name: "Unknown",
+    name: "Hmm not sure",
     type: "unknown",
     icon: "help-circle-outline",
   },
 ];
 
 const yesOrNoItems = [
-  {
-    id: "1",
-    name: "Yes",
-    type: "yes",
-  },
-  {
-    id: "2",
-    name: "No",
-    type: "no",
-  },
+  { id: "1", name: "Yes", type: "yes" },
+  { id: "2", name: "No", type: "no" },
 ];
 
 const PetCard = ({
@@ -86,25 +53,29 @@ const PetCard = ({
   isIonicons: boolean;
 }) => {
   return (
-    <Pressable onPress={handlePress} style={{ flex: 1 }}>
-      <Card
-        style={[
-          styles.card,
-          isSelected && styles.selectedBorder, // Apply border if selected
-        ]}
-      >
-        <View style={{ alignItems: "center", padding: 20 }}>
+    <Pressable onPress={handlePress} style={styles.cardContainer}>
+      <Card style={[styles.card, isSelected && styles.selectedBorder]}>
+        <View style={styles.cardContent}>
           {isIonicons ? (
-            <Ionicons name={pet.icon} size={60} color="black" />
+            <Ionicons
+              name={pet.icon}
+              size={60}
+              color={isSelected ? "#4CAF50" : "#666"}
+            />
           ) : (
-            <FontAwesome5 name={pet.icon} size={60} color="black" />
+            <FontAwesome5
+              name={pet.icon}
+              size={60}
+              color={isSelected ? "#4CAF50" : "#666"}
+            />
           )}
-        </View>
-        <Card.Content style={{ padding: 10 }}>
-          <Text variant="titleMedium" style={{ fontWeight: "bold" }}>
+          <Text
+            style={[styles.cardText, isSelected && styles.selectedText]}
+            variant="titleMedium"
+          >
             {pet.name}
           </Text>
-        </Card.Content>
+        </View>
       </Card>
     </Pressable>
   );
@@ -120,15 +91,13 @@ const YesOrNoCard = ({
   isSelected: boolean;
 }) => {
   return (
-    <Pressable onPress={handlePress} style={{ flex: 1 }}>
-      <Card
-        style={[
-          styles.card,
-          isSelected && styles.selectedBorder, // Apply border if selected
-        ]}
-      >
-        <Card.Content style={{ padding: 10 }}>
-          <Text variant="titleMedium" style={{ fontWeight: "bold" }}>
+    <Pressable onPress={handlePress} style={styles.cardContainer}>
+      <Card style={[styles.card, isSelected && styles.selectedBorder]}>
+        <Card.Content style={styles.cardContent}>
+          <Text
+            style={[styles.cardText, isSelected && styles.selectedText]}
+            variant="titleMedium"
+          >
             {item.name}
           </Text>
         </Card.Content>
@@ -151,7 +120,6 @@ export default function AddPetScreen() {
   const [selectedGender, setSelectedGender] = useState<string | null>(null);
   const [selectedChoice, setSelectedChoice] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-
   const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState("date");
   const [show, setShow] = useState(false);
@@ -160,6 +128,7 @@ export default function AddPetScreen() {
     const currentDate = selectedDate;
     setShow(false);
     setDate(currentDate);
+    console.log(currentDate.toLocaleDateString());
   };
 
   const showMode = (currentMode) => {
@@ -173,7 +142,6 @@ export default function AddPetScreen() {
 
   const handleSubmit = async () => {
     setLoading(true);
-
     const updates = {
       name,
       user_id: session?.user.id,
@@ -183,18 +151,12 @@ export default function AddPetScreen() {
       gender,
       avatar,
     };
-
     const { status, error } = await supabase.from("pets").insert(updates);
-
     if (status === 201) {
       Alert.alert("Pet added successfully!");
       router.push("/");
     }
-
-    if (error) {
-      Alert.alert(error.message);
-    }
-
+    if (error) Alert.alert(error.message);
     setLoading(false);
   };
 
@@ -204,9 +166,7 @@ export default function AddPetScreen() {
       allowsEditing: true,
       quality: 1,
     });
-
     if (!result.canceled) {
-      console.log(result);
       setSelectedImage(result.assets[0].uri);
     } else {
       alert("You did not select any image.");
@@ -215,29 +175,23 @@ export default function AddPetScreen() {
 
   const uploadImage = async () => {
     if (!selectedImage?.startsWith(`file://`)) return;
-
     setUploading(true);
-
     const base64 = await FileSystem.readAsStringAsync(selectedImage, {
       encoding: "base64",
     });
-
     const filePath = selectedImage?.endsWith(`jpeg`)
       ? `${randomUUID()}.jpeg`
       : selectedImage?.endsWith(`jpg`)
       ? `${randomUUID()}.jpg`
       : `${randomUUID()}.png`;
-
     const contentType = selectedImage?.endsWith(`jpeg`)
       ? `image/jpeg`
       : selectedImage?.endsWith(`jpg`)
       ? `image/jpg`
       : `image/png`;
-
     const { data, error } = await supabase.storage
       .from("pet-images")
       .upload(filePath, decode(base64), { contentType });
-
     if (data) {
       setUploading(false);
       setAvatar(data.path);
@@ -254,12 +208,11 @@ export default function AddPetScreen() {
       <View style={styles.container}>
         {current === 0 && (
           <>
-            <View style={{ alignItems: "center", marginBottom: 20 }}>
-              <Text style={{ fontWeight: "bold", marginTop: 10, fontSize: 24 }}>
-                Which pet do you have?
-              </Text>
+            <View style={styles.header}>
+              <Text style={styles.headerTitle}>Which pet do you have?</Text>
+              <Text style={styles.headerSubtitle}>Pick your new buddy!</Text>
             </View>
-            <View style={{ padding: 10 }}>
+            <View style={styles.listContainer}>
               <FlatList
                 data={pets}
                 keyExtractor={(item) => item.id}
@@ -275,18 +228,16 @@ export default function AddPetScreen() {
                     isIonicons={false}
                   />
                 )}
+                contentContainerStyle={styles.flatListContent}
               />
             </View>
             <Button
               onPress={() => setCurrent(1)}
               mode="contained"
-              style={{
-                marginTop: 16,
-                paddingVertical: 8,
-                borderRadius: 50,
-              }}
-              labelStyle={{ fontSize: 18, fontWeight: "bold" }}
+              style={styles.continueButton}
+              labelStyle={styles.buttonLabel}
               disabled={!species}
+              icon="arrow-right"
             >
               Continue
             </Button>
@@ -294,9 +245,12 @@ export default function AddPetScreen() {
         )}
         {current === 1 && (
           <View>
-            <View style={{ alignItems: "center", marginBottom: 20 }}>
-              <Text style={{ fontWeight: "bold", marginTop: 10, fontSize: 24 }}>
-                What is the name of your {species}?
+            <View style={styles.header}>
+              <Text style={styles.headerTitle}>
+                What’s your {species}’s name?
+              </Text>
+              <Text style={styles.headerSubtitle}>
+                Give your pet a special name!
               </Text>
             </View>
             <TextInput
@@ -304,33 +258,29 @@ export default function AddPetScreen() {
               value={name}
               onChangeText={setName}
               mode="outlined"
-              style={{ marginBottom: 15 }}
+              style={styles.input}
               keyboardType="default"
-              left={<TextInput.Icon icon="email-outline" />}
+              theme={{ roundness: 8 }}
+              outlineColor="#e0e0e0"
+              activeOutlineColor="#4CAF50"
+              left={<TextInput.Icon icon="paw" color="#666" />}
             />
             <Button
               onPress={() => setCurrent(2)}
-              mode="contained"
-              style={{
-                marginTop: 16,
-                paddingVertical: 8,
-                borderRadius: 50,
-              }}
-              labelStyle={{ fontSize: 18, fontWeight: "bold" }}
+              mode="outlined"
+              style={styles.skipButton}
+              labelStyle={styles.skipButtonLabel}
               disabled={!!name}
             >
-              Hmm not decided yet
+              Not decided yet
             </Button>
             <Button
               onPress={() => setCurrent(2)}
               mode="contained"
-              style={{
-                marginTop: 16,
-                paddingVertical: 8,
-                borderRadius: 50,
-              }}
-              labelStyle={{ fontSize: 18, fontWeight: "bold" }}
+              style={styles.continueButton}
+              labelStyle={styles.buttonLabel}
               disabled={!name}
+              icon="arrow-right"
             >
               Continue
             </Button>
@@ -338,12 +288,13 @@ export default function AddPetScreen() {
         )}
         {current === 2 && (
           <>
-            <View style={{ alignItems: "center", marginBottom: 20 }}>
-              <Text style={{ fontWeight: "bold", marginTop: 10, fontSize: 24 }}>
-                What is the gender of {!!name ? name : `your ${species}`}?
+            <View style={styles.header}>
+              <Text style={styles.headerTitle}>
+                What’s {name || `your ${species}`}’s gender?
               </Text>
+              <Text style={styles.headerSubtitle}>Tell us a bit more!</Text>
             </View>
-            <View style={{ padding: 10 }}>
+            <View style={styles.listContainer}>
               <FlatList
                 data={genderItems}
                 keyExtractor={(item) => item.id}
@@ -359,18 +310,16 @@ export default function AddPetScreen() {
                     isSelected={selectedGender === item.type}
                   />
                 )}
+                contentContainerStyle={styles.flatListContent}
               />
             </View>
             <Button
               onPress={() => setCurrent(3)}
               mode="contained"
-              style={{
-                marginTop: 16,
-                paddingVertical: 8,
-                borderRadius: 50,
-              }}
-              labelStyle={{ fontSize: 18, fontWeight: "bold" }}
-              disabled={!species}
+              style={styles.continueButton}
+              labelStyle={styles.buttonLabel}
+              disabled={!gender}
+              icon="arrow-right"
             >
               Continue
             </Button>
@@ -378,12 +327,13 @@ export default function AddPetScreen() {
         )}
         {current === 3 && (
           <>
-            <View style={{ alignItems: "center", marginBottom: 20 }}>
-              <Text style={{ fontWeight: "bold", marginTop: 10, fontSize: 24 }}>
-                Add an image of {!!name ? name : `your ${species}`}
+            <View style={styles.header}>
+              <Text style={styles.headerTitle}>
+                Add the profile picture of {name || `your ${species}`}
               </Text>
+              <Text style={styles.headerSubtitle}>Show off your pet!</Text>
             </View>
-            <View style={{ padding: 10 }}>
+            <View style={styles.imageContainer}>
               {!!selectedImage ? (
                 <Image source={{ uri: selectedImage }} style={styles.image} />
               ) : (
@@ -394,60 +344,44 @@ export default function AddPetScreen() {
               )}
             </View>
             <Pressable onPress={pickImageAsync}>
-              <Text
-                style={{
-                  fontWeight: "bold",
-                  marginVertical: 10,
-                  fontSize: 16,
-                  alignSelf: "center",
-                  color: Colors.light.tint,
-                }}
-              >
-                Select image
-              </Text>
+              <Text style={styles.selectImageText}>Select Image</Text>
             </Pressable>
             <Button
               onPress={() => setCurrent(4)}
-              mode="contained"
-              style={{
-                marginTop: 16,
-                paddingVertical: 8,
-                borderRadius: 50,
-              }}
-              labelStyle={{ fontSize: 18, fontWeight: "bold" }}
+              mode="outlined"
+              style={styles.skipButton}
+              labelStyle={styles.skipButtonLabel}
             >
               Skip
             </Button>
             <Button
               onPress={() => {
                 const res = uploadImage();
-
-                if (!!res) {
-                  setCurrent(4);
-                }
+                if (!!res) setCurrent(4);
               }}
               mode="contained"
-              style={{
-                marginTop: 16,
-                paddingVertical: 8,
-                borderRadius: 50,
-              }}
-              labelStyle={{ fontSize: 18, fontWeight: "bold" }}
+              style={[
+                styles.continueButton,
+                (!selectedImage || uploading) && styles.buttonDisabled,
+              ]}
+              labelStyle={styles.buttonLabel}
               disabled={!selectedImage || uploading}
               loading={uploading}
+              icon="arrow-right"
             >
-              Upload Image & Continue
+              Upload & Continue
             </Button>
           </>
         )}
         {current === 4 && (
           <>
-            <View style={{ alignItems: "center", marginBottom: 20 }}>
-              <Text style={{ fontWeight: "bold", marginTop: 10, fontSize: 24 }}>
-                Do you know the age of {!!name ? name : `your ${species}`}?
+            <View style={styles.header}>
+              <Text style={styles.headerTitle}>
+                Know the age of {name || `your ${species}`}?
               </Text>
+              <Text style={styles.headerSubtitle}>Let’s get the details!</Text>
             </View>
-            <View style={{ padding: 10 }}>
+            <View style={styles.listContainer}>
               <FlatList
                 data={yesOrNoItems}
                 keyExtractor={(item) => item.id}
@@ -455,84 +389,70 @@ export default function AddPetScreen() {
                 renderItem={({ item }) => (
                   <YesOrNoCard
                     item={item}
-                    handlePress={() => {
-                      setSelectedChoice(item.type);
-                    }}
+                    handlePress={() => setSelectedChoice(item.type)}
                     isSelected={selectedChoice === item.type}
                   />
                 )}
+                contentContainerStyle={styles.flatListContent}
               />
             </View>
-            {selectedChoice === "yes" ? (
+            {selectedChoice === "yes" && (
               <>
-                <Text
-                  style={{ fontWeight: "bold", marginTop: 10, fontSize: 18 }}
+                <Text style={styles.subHeader}>Great! Add the age</Text>
+                <TextInput
+                  label="Age"
+                  value={age.toString()}
+                  onChangeText={(text) => setAge(parseInt(text) || 0)}
+                  mode="outlined"
+                  style={styles.input}
+                  keyboardType="numeric"
+                  theme={{ roundness: 8 }}
+                  outlineColor="#e0e0e0"
+                  activeOutlineColor="#4CAF50"
+                  left={<TextInput.Icon icon="calendar" color="#666" />}
+                />
+                <Button
+                  onPress={showDatepicker}
+                  mode="outlined"
+                  style={styles.dateButton}
+                  labelStyle={styles.dateButtonLabel}
+                  icon="calendar"
                 >
-                  Great! Type the age
-                </Text>
-                <View style={{ padding: 10 }}>
-                  <TextInput
-                    label="Age"
-                    value={age}
-                    onChangeText={setAge}
-                    mode="outlined"
-                    style={{ marginBottom: 15 }}
-                    keyboardType="default"
-                    left={<TextInput.Icon icon="email-outline" />}
+                  {!!date ? `${date.toDateString()}` : `Or pick DOB`}
+                </Button>
+                {show && (
+                  <RNDateTimePicker
+                    testID="dateTimePicker"
+                    value={date}
+                    mode={mode}
+                    onChange={onChange}
                   />
-                </View>
-                <View>
-                  <Button
-                    onPress={showDatepicker}
-                    mode="contained"
-                    style={{
-                      marginTop: 16,
-                      paddingVertical: 2,
-                      borderRadius: 50,
-                    }}
-                    labelStyle={{ fontSize: 16, fontWeight: "bold" }}
-                  >
-                    Or choose the date of birth
-                  </Button>
-                  {show && (
-                    <RNDateTimePicker
-                      testID="dateTimePicker"
-                      value={date}
-                      mode={mode}
-                      onChange={onChange}
-                    />
-                  )}
-                </View>
+                )}
                 <Button
                   onPress={handleSubmit}
                   mode="contained"
-                  style={{
-                    marginTop: 16,
-                    paddingVertical: 8,
-                    borderRadius: 50,
-                  }}
-                  labelStyle={{ fontSize: 18, fontWeight: "bold" }}
-                  disabled={!age || !date || loading}
+                  style={styles.submitButton}
+                  labelStyle={styles.buttonLabel}
+                  disabled={(!age && !date) || loading}
+                  loading={loading}
+                  icon="check"
                 >
-                  {loading ? "Saving..." : "Submit"}
+                  Submit
                 </Button>
               </>
-            ) : (
-              selectedChoice === "no" && (
-                <Button
-                  onPress={handleSubmit}
-                  mode="contained"
-                  style={{
-                    marginTop: 16,
-                    paddingVertical: 8,
-                    borderRadius: 50,
-                  }}
-                  labelStyle={{ fontSize: 18, fontWeight: "bold" }}
-                  disabled={loading}
-                >
-                  {loading ? "Saving..." : "Submit"}
-                </Button>
-              )
+            )}
+            {selectedChoice === "no" && (
+              <Button
+                onPress={handleSubmit}
+                mode="contained"
+                style={styles.submitButton}
+                labelStyle={styles.buttonLabel}
+                disabled={loading}
+                loading={loading}
+                icon="check"
+              >
+                Submit
+              </Button>
             )}
           </>
         )}
@@ -543,19 +463,150 @@ export default function AddPetScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 20,
-    paddingHorizontal: 24,
+    flex: 1,
+    backgroundColor: "#F5F6F5", // Light pet-friendly background
+    paddingHorizontal: 20,
+    paddingTop: 20,
+  },
+  header: {
+    alignItems: "center",
+    marginBottom: 24,
+  },
+  headerTitle: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#333",
+    textAlign: "center",
+  },
+  headerSubtitle: {
+    fontSize: 16,
+    color: "#666",
+    marginTop: 8,
+    fontStyle: "italic",
+    textAlign: "center",
+  },
+  listContainer: {
+    paddingVertical: 10,
+  },
+  flatListContent: {
+    paddingBottom: 20,
+  },
+  cardContainer: {
+    flex: 1,
+    margin: 8,
+  },
+  card: {
+    flex: 1,
+    borderRadius: 16,
+    elevation: 4,
+    backgroundColor: "#fff",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
   },
   selectedBorder: {
-    borderWidth: 2,
-    borderColor: "#000",
-    padding: 10,
-    margin: 5,
+    borderWidth: 3,
+    borderColor: "#4CAF50", // Green for selection
   },
-  card: { flex: 1, margin: 10, borderRadius: 12, elevation: 4, borderWidth: 0 },
+  cardContent: {
+    alignItems: "center",
+    padding: 20,
+  },
+  cardText: {
+    fontWeight: "600",
+    color: "#333",
+  },
+  selectedText: {
+    color: "#4CAF50",
+    fontWeight: "bold",
+  },
+  input: {
+    marginBottom: 20,
+    backgroundColor: "#fff",
+  },
+  imageContainer: {
+    alignItems: "center",
+    padding: 10,
+  },
   image: {
     height: 200,
-    aspectRatio: 1,
+    width: 200,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: "#e0e0e0",
     alignSelf: "center",
+    backgroundColor: "#f0f0f0",
+  },
+  selectImageText: {
+    fontWeight: "700",
+    fontSize: 16,
+    color: "#4CAF50",
+    alignSelf: "center",
+    marginBottom: 20,
+    textDecorationLine: "underline",
+  },
+  continueButton: {
+    marginVertical: 16,
+    paddingVertical: 10,
+    borderRadius: 8,
+    backgroundColor: "#4CAF50",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5,
+  },
+  skipButton: {
+    marginVertical: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    borderColor: "#4CAF50",
+    borderWidth: 2,
+    backgroundColor: "transparent",
+  },
+  skipButtonLabel: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#4CAF50",
+  },
+  dateButton: {
+    marginVertical: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    borderColor: "#4CAF50",
+    borderWidth: 2,
+    backgroundColor: "transparent",
+  },
+  dateButtonLabel: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#4CAF50",
+  },
+  subHeader: {
+    fontSize: 20,
+    fontWeight: "600",
+    color: "#333",
+    marginBottom: 16,
+    textAlign: "center",
+  },
+  submitButton: {
+    marginVertical: 20,
+    paddingVertical: 10,
+    borderRadius: 50,
+    backgroundColor: "#4CAF50",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5,
+  },
+  buttonLabel: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#fff",
+  },
+  buttonDisabled: {
+    backgroundColor: "#CCCCCC", // Disabled state color
   },
 });
