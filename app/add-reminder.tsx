@@ -243,6 +243,9 @@ const AddReminderScreen = () => {
           value={title}
           onChangeText={setTitle}
           mode="outlined"
+          theme={{ roundness: 8 }}
+          outlineColor="#e0e0e0"
+          activeOutlineColor="#4CAF50"
           style={styles.input}
         />
 
@@ -266,6 +269,9 @@ const AddReminderScreen = () => {
               onChangeText={(text) => setInterval(parseInt(text) || undefined)}
               keyboardType="numeric"
               placeholder="e.g., 90"
+              theme={{ roundness: 8 }}
+              outlineColor="#e0e0e0"
+              activeOutlineColor="#4CAF50"
             />
           </>
         )}
@@ -281,6 +287,9 @@ const AddReminderScreen = () => {
             editable={false}
             style={styles.input}
             left={<TextInput.Icon icon="calendar" />}
+            theme={{ roundness: 8 }}
+            outlineColor="#e0e0e0"
+            activeOutlineColor="#4CAF50"
           />
         </TouchableOpacity>
 
@@ -309,6 +318,9 @@ const AddReminderScreen = () => {
                 editable={false}
                 style={styles.input}
                 left={<TextInput.Icon icon="calendar" />}
+                theme={{ roundness: 8 }}
+                outlineColor="#e0e0e0"
+                activeOutlineColor="#4CAF50"
               />
             </TouchableOpacity>
 
@@ -337,6 +349,9 @@ const AddReminderScreen = () => {
             editable={false}
             style={styles.input}
             left={<TextInput.Icon icon="calendar" />}
+            theme={{ roundness: 8 }}
+            outlineColor="#e0e0e0"
+            activeOutlineColor="#4CAF50"
           />
         </TouchableOpacity>
 
@@ -361,6 +376,10 @@ const AddReminderScreen = () => {
           onChangeText={setNotes}
           mode="outlined"
           style={styles.input}
+          theme={{ roundness: 8 }}
+          outlineColor="#e0e0e0"
+          activeOutlineColor="#4CAF50"
+          left={<TextInput.Icon icon="note" color="#666" />}
         />
 
         <Button
@@ -387,9 +406,10 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    marginTop: 10,
-    marginBottom: 5,
     fontWeight: "700",
+    color: "#333",
+    marginTop: 8,
+    marginBottom: 8,
   },
   input: {
     marginVertical: 8,
@@ -411,13 +431,19 @@ const styles = StyleSheet.create({
   },
   saveButton: {
     marginVertical: 20,
+    paddingVertical: 10,
     borderRadius: 8,
-    backgroundColor: "#6200ee",
-    paddingVertical: 4,
+    backgroundColor: "#4CAF50", // Pet-friendly green
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5,
   },
   saveButtonLabel: {
-    fontSize: 16,
-    fontWeight: "600",
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#fff",
   },
 });
 
