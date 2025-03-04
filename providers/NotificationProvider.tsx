@@ -95,6 +95,27 @@ async function scheduleRecurringNotifications(userId: string) {
         });
 
         scheduledIds.push(notificationId);
+
+        const payload = {
+          notification_id: notificationId,
+          type: Notifications.SchedulableTriggerInputTypes.DATE,
+          title: reminder.title,
+          body: !!reminder.notes && reminder.notes,
+          time: triggerDate.getTime(),
+          user_id: reminder.user_id,
+        };
+
+        const { data, error, status } = await supabase
+          .from("notifications")
+          .insert(payload);
+
+        if (status === 201) {
+          console.log(`Notification stored in DB.`);
+        }
+        if (error) {
+          console.error(`Notification couldn't be stored in DB.`);
+        }
+
         // console.log(
         //   `Scheduled "${reminder.title}" for ${triggerDate} with ID: ${notificationId}`
         // );
