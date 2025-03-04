@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
   card: {
     flex: 1,
     margin: 8,
-    borderRadius: 16,
+    borderRadius: 8,
     elevation: 6,
     backgroundColor: "#fff",
     shadowColor: "#000",
@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
     bottom: 30,
     right: 20,
     backgroundColor: "#4CAF50",
-    borderRadius: 50,
+    borderRadius: 8,
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 12,
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#fff",
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: "700",
     marginLeft: 6,
   },
 });

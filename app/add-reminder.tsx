@@ -409,7 +409,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#333",
     marginTop: 8,
-    marginBottom: 8,
+    marginBottom: 4,
   },
   input: {
     marginVertical: 8,

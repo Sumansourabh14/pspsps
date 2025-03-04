@@ -136,13 +136,6 @@ const PetScreen = () => {
               style={styles.avatar}
             />
           )}
-          {petData.name && (
-            <View style={styles.nameOverlay}>
-              <Text style={styles.petName} variant="headlineLarge">
-                {petData.name}
-              </Text>
-            </View>
-          )}
         </View>
 
         <View style={styles.infoCard}>
@@ -197,7 +190,7 @@ const PetScreen = () => {
 
             <View style={styles.infoItem}>
               <Ionicons name="calendar-number" size={24} color="#4CAF50" />
-              <Text style={styles.infoLabel}>DOB</Text>
+              <Text style={styles.infoLabel}>Date of Birth</Text>
               <Text style={styles.infoValue}>
                 {petData.birth_date ? petData.birth_date : "Unknown"}
               </Text>
@@ -319,7 +312,7 @@ const styles = StyleSheet.create({
     marginVertical: 12,
     padding: 10,
     backgroundColor: "#fafafa",
-    borderRadius: 12,
+    borderRadius: 8,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
@@ -330,11 +323,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#666",
     marginTop: 8,
-    fontWeight: "500",
+    fontWeight: "700",
     textAlign: "center",
   },
   infoValue: {
-    fontSize: 16,
+    fontSize: 14,
     color: "#333",
     marginTop: 4,
     fontWeight: "600",
