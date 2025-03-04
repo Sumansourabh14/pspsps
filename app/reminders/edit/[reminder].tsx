@@ -1,35 +1,36 @@
+import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/providers/AuthProvider";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { Picker } from "@react-native-picker/picker";
+import { Stack, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
   Alert,
-  TouchableOpacity,
   ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import { Picker } from "@react-native-picker/picker";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import { Button, TextInput } from "react-native-paper";
-import { Stack, useLocalSearchParams } from "expo-router";
-import { useAuth } from "@/providers/AuthProvider";
-import { supabase } from "@/lib/supabase";
 
 interface Reminder {
-  id: number; // Unique identifier for the reminder
+  id: number;
   pet_id: number;
-  title: string; // Short description of the reminder
-  type: string; // The task value (e.g., "deworming", "feeding_wet")
-  frequency: string; // Frequency value (e.g., "daily", "weekly")
-  start_date: Date; // When the reminder starts
-  next_due: Date; // When the next instance occurs
-  is_active: boolean; // Whether the reminder is currently active
-  notes?: string; // Optional additional notes
-  last_completed?: Date; // When it was last completed (optional)
-  interval?: number; // For custom frequency, interval in days (optional)
+  title: string;
+  type: string;
+  frequency: string;
+  start_date: Date;
+  next_due: Date;
+  end_date: Date;
+  is_active: boolean;
+  notes?: string;
+  last_completed?: Date;
+  interval?: number;
   user_id: string;
+  time: string;
 }
 
-// Enums from your schema
 enum ReminderType {
   Deworming = "deworming",
   FeedingWet = "feeding_wet",
@@ -57,74 +58,23 @@ interface Pet {
 }
 
 const petCareTasks = [
-  {
-    id: 1,
-    label: "Deworming",
-    value: "deworming",
-  },
-  {
-    id: 2,
-    label: "Feeding Wet",
-    value: "feeding_wet",
-  },
-  {
-    id: 3,
-    label: "Feeding Dry",
-    value: "feeding_dry",
-  },
-  {
-    id: 4,
-    label: "Nail Cutting",
-    value: "nail_cutting",
-  },
-  {
-    id: 5,
-    label: "Litter Cleaning",
-    value: "litter_cleaning",
-  },
-  {
-    id: 6,
-    label: "Vaccination",
-    value: "vaccination",
-  },
-  {
-    id: 7,
-    label: "Vet Checkup",
-    value: "vet_checkup",
-  },
-  {
-    id: 8,
-    label: "Playtime",
-    value: "playtime",
-  },
+  { id: 1, label: "Deworming", value: "deworming" },
+  { id: 2, label: "Feeding Wet Food", value: "feeding_wet" },
+  { id: 3, label: "Feeding Dry Food", value: "feeding_dry" },
+  { id: 4, label: "Nail Cutting", value: "nail_cutting" },
+  { id: 5, label: "Litter Cleaning", value: "litter_cleaning" },
+  { id: 6, label: "Vaccination", value: "vaccination" },
+  { id: 7, label: "Vet Checkup", value: "vet_checkup" },
+  { id: 8, label: "Playtime", value: "playtime" },
 ];
 
 const frequencyOptions = [
-  {
-    id: 1,
-    label: "Daily",
-    value: "daily",
-  },
-  {
-    id: 2,
-    label: "Weekly",
-    value: "weekly",
-  },
-  {
-    id: 3,
-    label: "Monthly",
-    value: "monthly",
-  },
-  {
-    id: 4,
-    label: "Yearly",
-    value: "yearly",
-  },
-  {
-    id: 5,
-    label: "Custom",
-    value: "custom",
-  },
+  { id: 1, label: "Daily", value: "daily" },
+  { id: 2, label: "Weekly", value: "weekly" },
+  { id: 3, label: "Monthly", value: "monthly" },
+  { id: 4, label: "Yearly", value: "yearly" },
+  { id: 5, label: "Custom", value: "custom" },
+  { id: 6, label: "Once", value: "once" },
 ];
 
 const EditReminderScreen = () => {
@@ -151,12 +101,12 @@ const EditReminderScreen = () => {
     const updatedReminder = {
       pet_id: petId,
       type,
-      title: title || `${type.replace("_", " ")} for pet`, // Default title
+      title: title || `${type.replace("_", " ")} for pet`,
       frequency,
       interval: frequency === Frequency.Custom ? interval : null,
       start_date: startDate,
-      last_completed: null, // Initially null
-      next_due: startDate, // Starts at startDate
+      last_completed: null,
+      next_due: startDate,
       notes: notes || null,
       is_active: true,
       user_id: session?.user.id,
@@ -178,7 +128,6 @@ const EditReminderScreen = () => {
     setSaving(false);
   };
 
-  // Fetch reminder data
   useEffect(() => {
     let mounted = true;
 
@@ -223,7 +172,6 @@ const EditReminderScreen = () => {
     }
   }, [reminderData]);
 
-  // fetch user pets
   useEffect(() => {
     let mounted = true;
 
@@ -254,98 +202,127 @@ const EditReminderScreen = () => {
   return (
     <>
       <Stack.Screen options={{ title: "Edit Reminder" }} />
-      <ScrollView style={styles.container}>
-        <Text style={styles.label}>For which pet?</Text>
-        {pets && (
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.scrollContent}
+      >
+        <View style={styles.card}>
+          <Text style={styles.label}>For Which Pet?</Text>
+          {pets && (
+            <Picker
+              selectedValue={petId}
+              onValueChange={(value) => setPetId(value)}
+              style={styles.picker}
+            >
+              {pets.map((pet) => (
+                <Picker.Item key={pet.id} label={pet.name} value={pet.id} />
+              ))}
+            </Picker>
+          )}
+
+          <Text style={styles.label}>Reminder Type</Text>
           <Picker
-            selectedValue={petId}
-            onValueChange={(value) => setPetId(value)}
+            selectedValue={type}
+            onValueChange={(value) => setType(value)}
             style={styles.picker}
           >
-            {pets.map((pet) => (
-              <Picker.Item key={pet.id} label={pet.name} value={pet.id} />
+            {petCareTasks.map((task) => (
+              <Picker.Item
+                key={task.id}
+                label={task.label}
+                value={task.value}
+              />
             ))}
           </Picker>
-        )}
 
-        <Text style={styles.label}>Reminder Type</Text>
-        <Picker
-          selectedValue={type}
-          onValueChange={(value) => setType(value)}
-          style={styles.picker}
-        >
-          {petCareTasks.map((task) => (
-            <Picker.Item key={task.id} label={task.label} value={task.value} />
-          ))}
-        </Picker>
-
-        <Text style={styles.label}>Title</Text>
-        <TextInput
-          placeholder="e.g., Feed Fluffy wet food"
-          value={title}
-          onChangeText={setTitle}
-          mode="outlined"
-          style={styles.input}
-        />
-
-        <Text style={styles.label}>Frequency</Text>
-        <Picker
-          selectedValue={frequency}
-          onValueChange={(value) => setFrequency(value)}
-          style={styles.picker}
-        >
-          {frequencyOptions.map((freq) => (
-            <Picker.Item key={freq.id} label={freq.label} value={freq.value} />
-          ))}
-        </Picker>
-
-        {frequency === Frequency.Custom && (
-          <>
-            <Text style={styles.label}>Interval (days)</Text>
-            <TextInput
-              style={styles.input}
-              value={interval?.toString() || ""}
-              onChangeText={(text) => setInterval(parseInt(text) || undefined)}
-              keyboardType="numeric"
-              placeholder="e.g., 90"
-            />
-          </>
-        )}
-
-        <Text style={styles.label}>Start Date & Time</Text>
-        <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+          <Text style={styles.label}>Title</Text>
           <TextInput
-            placeholder="Start Date"
-            value={startDate.toLocaleString() || "Not set"}
+            placeholder="e.g., Feed Fluffy wet food"
+            value={title}
+            onChangeText={setTitle}
             mode="outlined"
-            editable={false}
             style={styles.input}
-            left={<TextInput.Icon icon="calendar" />}
+            theme={{ roundness: 8 }}
+            outlineColor="#e0e0e0"
+            activeOutlineColor="#4CAF50"
+            left={<TextInput.Icon icon="text" color="#666" />}
           />
-        </TouchableOpacity>
 
-        {showDatePicker && (
-          <DateTimePicker
-            value={new Date(startDate)}
-            mode="date"
-            display="default"
-            onChange={(event, date) => {
-              setShowDatePicker(false);
-              if (date) {
-                setStartDate(date);
-              }
-            }}
+          <Text style={styles.label}>Frequency</Text>
+          <Picker
+            selectedValue={frequency}
+            onValueChange={(value) => setFrequency(value)}
+            style={styles.picker}
+          >
+            {frequencyOptions.map((freq) => (
+              <Picker.Item
+                key={freq.id}
+                label={freq.label}
+                value={freq.value}
+              />
+            ))}
+          </Picker>
+
+          {frequency === Frequency.Custom && (
+            <>
+              <Text style={styles.label}>Interval (days)</Text>
+              <TextInput
+                style={styles.input}
+                value={interval?.toString() || ""}
+                onChangeText={(text) =>
+                  setInterval(parseInt(text) || undefined)
+                }
+                keyboardType="numeric"
+                placeholder="e.g., 90"
+                mode="outlined"
+                theme={{ roundness: 8 }}
+                outlineColor="#e0e0e0"
+                activeOutlineColor="#4CAF50"
+                left={<TextInput.Icon icon="numeric" color="#666" />}
+              />
+            </>
+          )}
+
+          <Text style={styles.label}>Start Date & Time</Text>
+          <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+            <TextInput
+              placeholder="Start Date"
+              value={startDate.toLocaleString() || "Not set"}
+              mode="outlined"
+              editable={false}
+              style={styles.input}
+              theme={{ roundness: 8 }}
+              outlineColor="#e0e0e0"
+              activeOutlineColor="#4CAF50"
+              left={<TextInput.Icon icon="calendar" color="#666" />}
+            />
+          </TouchableOpacity>
+
+          {showDatePicker && (
+            <DateTimePicker
+              value={new Date(startDate)}
+              mode="date"
+              display="default"
+              onChange={(event, date) => {
+                setShowDatePicker(false);
+                if (date) setStartDate(date);
+              }}
+            />
+          )}
+
+          <Text style={styles.label}>Notes</Text>
+          <TextInput
+            placeholder="e.g., Use brand X dewormer"
+            value={notes}
+            onChangeText={setNotes}
+            mode="outlined"
+            style={styles.input}
+            theme={{ roundness: 8 }}
+            outlineColor="#e0e0e0"
+            activeOutlineColor="#4CAF50"
+            left={<TextInput.Icon icon="note" color="#666" />}
           />
-        )}
-
-        <Text style={styles.label}>Notes</Text>
-        <TextInput
-          placeholder="e.g., Use brand X dewormer"
-          value={notes}
-          onChangeText={setNotes}
-          mode="outlined"
-          style={styles.input}
-        />
+        </View>
 
         <Button
           mode="contained"
@@ -366,42 +343,74 @@ const EditReminderScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    backgroundColor: "#F5F6F5", // Light pet-friendly background
+  },
+  scrollContent: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+    paddingHorizontal: 12,
+  },
+  headerIcon: {
+    marginRight: 12,
+  },
+  headerTitle: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  card: {
+    borderRadius: 8,
     backgroundColor: "#fff",
+    elevation: 6,
+    padding: 16,
   },
   label: {
     fontSize: 14,
-    marginTop: 10,
-    marginBottom: 5,
     fontWeight: "700",
+    color: "#333",
+    marginTop: 8,
+    marginBottom: 8,
   },
   input: {
     marginVertical: 8,
+    backgroundColor: "#fff",
   },
   picker: {
-    width: "100%", // Adjust width as needed
-    backgroundColor: "#fff", // White background
+    width: "100%",
+    backgroundColor: "#fff",
     borderRadius: 8,
-    marginVertical: 4,
-
-    // Shadow for iOS
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
+    marginBottom: 8,
+    paddingHorizontal: 12,
+    fontSize: 16,
+    color: "#333",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-
-    // Elevation for Android
     elevation: 3,
   },
   saveButton: {
     marginVertical: 20,
+    paddingVertical: 10,
     borderRadius: 8,
-    backgroundColor: "#6200ee",
-    paddingVertical: 4,
+    backgroundColor: "#4CAF50", // Pet-friendly green
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5,
   },
   saveButtonLabel: {
-    fontSize: 16,
-    fontWeight: "600",
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#fff",
   },
 });
 
