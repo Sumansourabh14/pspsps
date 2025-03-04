@@ -36,7 +36,6 @@ const EditPetScreen = () => {
   const { id } = useLocalSearchParams();
   const { session } = useAuth();
 
-  // Fetch pet data
   useEffect(() => {
     let mounted = true;
 
@@ -69,7 +68,6 @@ const EditPetScreen = () => {
     };
   }, [id, session]);
 
-  // Handle save changes
   const handleSave = async () => {
     if (!petData) return;
 
@@ -85,7 +83,6 @@ const EditPetScreen = () => {
         })
         .eq("id", petData.id);
 
-      // Navigate to the same pet profile
       if (status === 201 || status === 204) {
         router.push({ pathname: `/pets/[pet]`, params: { id: petData.id } });
       }
@@ -118,125 +115,120 @@ const EditPetScreen = () => {
               loading={saving}
               disabled={saving}
               compact
+              style={styles.headerSaveButton}
+              labelStyle={styles.headerSaveLabel}
+              icon="content-save"
             >
               Save
             </Button>
           ),
         }}
       />
-      <ScrollView style={styles.container}>
-        <Card style={styles.card}>
-          <Card.Content>
-            {/* Name Input */}
-            <Text style={styles.label}>Pet Name</Text>
-            <TextInput
-              placeholder="Type your beloved pet's name"
-              value={petData.name}
-              onChangeText={(text) => setPetData({ ...petData, name: text })}
-              mode="outlined"
-              style={styles.input}
-              left={<TextInput.Icon icon="pencil" />}
-            />
-
-            {/* Species Selection */}
-            <Text style={styles.label}>Species</Text>
-            <SegmentedButtons
-              value={petData.species}
-              onValueChange={(value) =>
-                setPetData({
-                  ...petData,
-                  species: value as "dog" | "cat" | "fish",
-                })
-              }
-              buttons={[
-                {
-                  value: "dog",
-                  label: "Dog",
-                  icon: "dog",
-                },
-                {
-                  value: "cat",
-                  label: "Cat",
-                  icon: "cat",
-                },
-                {
-                  value: "fish",
-                  label: "Fish",
-                  icon: "fish",
-                },
-              ]}
-              style={styles.segmentedButtons}
-            />
-
-            {/* Gender Selection */}
-            <Text style={styles.label}>Gender</Text>
-            <SegmentedButtons
-              value={petData.gender}
-              onValueChange={(value) =>
-                setPetData({
-                  ...petData,
-                  gender: value as "male" | "female" | "unknown",
-                })
-              }
-              buttons={[
-                {
-                  value: "male",
-                  label: "Male",
-                  icon: "gender-male",
-                },
-                {
-                  value: "female",
-                  label: "Female",
-                  icon: "gender-female",
-                },
-                {
-                  value: "unknown",
-                  label: "Unknown",
-                  icon: "help-circle-outline",
-                },
-              ]}
-              style={styles.segmentedButtons}
-            />
-
-            {/* Birth Date Picker */}
-            <Text style={styles.label}>Birth Date</Text>
-            <TouchableOpacity
-              onPress={() => setShowDatePicker(true)}
-              style={styles.dateButton}
-            >
+      <View style={styles.outerContainer}>
+        <ScrollView style={styles.container}>
+          <View style={styles.card}>
+            <View>
+              {/* Name Input */}
+              <Text style={styles.label}>Pet Name</Text>
               <TextInput
-                placeholder="Birth Date"
-                value={petData.birth_date || "Not set"}
+                placeholder="Type your beloved pet's name"
+                value={petData.name}
+                onChangeText={(text) => setPetData({ ...petData, name: text })}
                 mode="outlined"
-                editable={false}
                 style={styles.input}
-                left={<TextInput.Icon icon="calendar" />}
+                theme={{ roundness: 8 }}
+                outlineColor="#e0e0e0"
+                activeOutlineColor="#4CAF50"
+                left={<TextInput.Icon icon="pencil" color="#666" />}
               />
-            </TouchableOpacity>
 
-            {showDatePicker && (
-              <DateTimePicker
-                value={
-                  petData.birth_date ? new Date(petData.birth_date) : new Date()
+              {/* Species Selection */}
+              <Text style={styles.label}>Species</Text>
+              <SegmentedButtons
+                value={petData.species}
+                onValueChange={(value) =>
+                  setPetData({
+                    ...petData,
+                    species: value as "dog" | "cat" | "fish",
+                  })
                 }
-                mode="date"
-                display="default"
-                maximumDate={new Date()} // Can't be born in the future
-                onChange={(event, date) => {
-                  setShowDatePicker(false);
-                  if (date) {
-                    setPetData({
-                      ...petData,
-                      birth_date: date.toISOString().split("T")[0],
-                    });
-                  }
-                }}
+                buttons={[
+                  { value: "dog", label: "Dog", icon: "dog" },
+                  { value: "cat", label: "Cat", icon: "cat" },
+                  { value: "fish", label: "Fish", icon: "fish" },
+                ]}
+                style={styles.segmentedButtons}
+                theme={{ roundness: 8 }}
               />
-            )}
-          </Card.Content>
-        </Card>
 
-        {/* Save Button */}
+              {/* Gender Selection */}
+              <Text style={styles.label}>Gender</Text>
+              <SegmentedButtons
+                value={petData.gender}
+                onValueChange={(value) =>
+                  setPetData({
+                    ...petData,
+                    gender: value as "male" | "female" | "unknown",
+                  })
+                }
+                buttons={[
+                  { value: "male", label: "Male", icon: "gender-male" },
+                  { value: "female", label: "Female", icon: "gender-female" },
+                  {
+                    value: "unknown",
+                    label: "Unknown",
+                    icon: "help-circle-outline",
+                  },
+                ]}
+                style={styles.segmentedButtons}
+                theme={{ roundness: 8 }}
+              />
+
+              {/* Birth Date Picker */}
+              <Text style={styles.label}>Birth Date</Text>
+              <TouchableOpacity
+                onPress={() => setShowDatePicker(true)}
+                style={styles.dateButton}
+              >
+                <TextInput
+                  placeholder="Birth Date"
+                  value={petData.birth_date || "Not set"}
+                  mode="outlined"
+                  editable={false}
+                  style={styles.input}
+                  theme={{ roundness: 8 }}
+                  outlineColor="#e0e0e0"
+                  activeOutlineColor="#4CAF50"
+                  left={<TextInput.Icon icon="calendar" color="#666" />}
+                />
+              </TouchableOpacity>
+
+              {showDatePicker && (
+                <DateTimePicker
+                  value={
+                    petData.birth_date
+                      ? new Date(petData.birth_date)
+                      : new Date()
+                  }
+                  mode="date"
+                  display="default"
+                  maximumDate={new Date()}
+                  onChange={(event, date) => {
+                    setShowDatePicker(false);
+                    if (date) {
+                      setPetData({
+                        ...petData,
+                        birth_date: date.toISOString().split("T")[0],
+                      });
+                    }
+                  }}
+                />
+              )}
+            </View>
+          </View>
+        </ScrollView>
+
+        {/* Save Button at Bottom Edge */}
         <Button
           mode="contained"
           onPress={handleSave}
@@ -248,7 +240,7 @@ const EditPetScreen = () => {
         >
           Save Changes
         </Button>
-      </ScrollView>
+      </View>
     </>
   );
 };
@@ -256,49 +248,69 @@ const EditPetScreen = () => {
 export default EditPetScreen;
 
 const styles = StyleSheet.create({
+  outerContainer: {
+    flex: 1,
+    backgroundColor: "#FFF",
+    position: "relative", // Allow absolute positioning of the button
+  },
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#F5F6F5",
   },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#F5F6F5",
   },
   loadingText: {
-    fontSize: 16,
+    fontSize: 18,
     color: "#666",
+    fontStyle: "italic",
   },
   card: {
-    margin: 16,
-    borderRadius: 12,
-    elevation: 4,
-    backgroundColor: "white",
-  },
-  input: {
-    marginVertical: 8,
+    padding: 12,
   },
   label: {
     fontSize: 14,
     color: "#333",
     marginTop: 12,
-    marginBottom: 4,
     fontWeight: "700",
+    paddingHorizontal: 8,
+  },
+  input: {
+    marginVertical: 8,
+    backgroundColor: "#fff",
   },
   segmentedButtons: {
     marginVertical: 8,
   },
   dateButton: {
-    marginVertical: 8,
+    marginBottom: 8,
+  },
+  headerSaveButton: {
+    backgroundColor: "#4CAF50",
+    borderRadius: 4,
+    paddingHorizontal: 8,
+  },
+  headerSaveLabel: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#fff",
   },
   saveButton: {
-    margin: 16,
+    position: "absolute",
+    bottom: 0,
+    left: 16,
+    right: 16,
+    marginVertical: 20,
+    paddingVertical: 10,
     borderRadius: 8,
-    backgroundColor: "#6200ee",
-    paddingVertical: 4,
+    backgroundColor: "#4CAF50",
   },
   saveButtonLabel: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "600",
+    color: "#fff",
   },
 });
