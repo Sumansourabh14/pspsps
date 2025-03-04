@@ -80,16 +80,15 @@ export default function SignInScreen() {
             }
           />
 
-          <TouchableOpacity style={styles.forgotPassword}>
-            <Text style={styles.forgotText}>Forgot Password?</Text>
-          </TouchableOpacity>
-
           <Button
             mode="contained"
             onPress={signInWithEmail}
             loading={loading}
             disabled={loading}
-            style={styles.button}
+            style={[
+              styles.button,
+              (!email || !password || loading) && styles.buttonDisabled,
+            ]}
             contentStyle={styles.buttonContent}
             labelStyle={styles.buttonLabel}
           >
@@ -167,6 +166,10 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: "#4CAF50", // Pet-friendly green
     borderRadius: 8,
+    marginTop: 8,
+  },
+  buttonDisabled: {
+    backgroundColor: "#CCCCCC", // Disabled state color
   },
   buttonContent: {
     paddingVertical: 8,

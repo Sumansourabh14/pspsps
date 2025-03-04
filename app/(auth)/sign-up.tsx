@@ -77,8 +77,11 @@ export default function SignUpScreen() {
             mode="contained"
             onPress={signUpWithEmail}
             loading={loading}
-            disabled={loading}
-            style={styles.button}
+            disabled={!email || !password || loading}
+            style={[
+              styles.button,
+              (!email || !password || loading) && styles.buttonDisabled,
+            ]}
             contentStyle={styles.buttonContent}
             labelStyle={styles.buttonLabel}
           >
@@ -148,6 +151,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#4CAF50", // Pet-friendly green
     borderRadius: 8,
     marginTop: 10,
+  },
+  buttonDisabled: {
+    backgroundColor: "#CCCCCC", // Disabled state color
   },
   buttonContent: {
     paddingVertical: 8,
