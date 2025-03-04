@@ -61,8 +61,10 @@ export default function SignUpScreen() {
             secureTextEntry={secureText}
             style={styles.input}
             theme={{ roundness: 8 }}
-            outlineColor="#e0e0e0"
-            activeOutlineColor="#4CAF50"
+            outlineColor={
+              password.length > 0 && password.length < 6 ? "#FF0000" : "#e0e0e0"
+            }
+            activeOutlineColor={password.length >= 6 ? "#4CAF50" : "#FF0000"}
             left={<TextInput.Icon icon="lock-outline" color="#666" />}
             right={
               <TextInput.Icon
@@ -72,6 +74,11 @@ export default function SignUpScreen() {
               />
             }
           />
+          {password.length < 6 && (
+            <Text style={styles.passwordHint}>
+              Password must be at least 6 characters
+            </Text>
+          )}
 
           <Button
             mode="contained"
@@ -80,7 +87,8 @@ export default function SignUpScreen() {
             disabled={!email || !password || loading}
             style={[
               styles.button,
-              (!email || !password || loading) && styles.buttonDisabled,
+              (!email || password.length <= 6 || loading) &&
+                styles.buttonDisabled,
             ]}
             contentStyle={styles.buttonContent}
             labelStyle={styles.buttonLabel}
@@ -150,7 +158,7 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: "#4CAF50", // Pet-friendly green
     borderRadius: 8,
-    marginTop: 10,
+    marginTop: 20,
   },
   buttonDisabled: {
     backgroundColor: "#CCCCCC", // Disabled state color
@@ -176,5 +184,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#4CAF50",
     fontWeight: "bold",
+  },
+  passwordHint: {
+    fontSize: 12,
+    color: "#FF0000",
+    marginTop: -8,
   },
 });
