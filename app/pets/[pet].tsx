@@ -59,15 +59,50 @@ const PetScreen = () => {
 
   const calculateAge = (dob?: string): string => {
     if (!dob) return "Unknown age";
-    const birthDate = new Date(dob);
-    const today = new Date();
-    const years = today.getFullYear() - birthDate.getFullYear();
-    const months = today.getMonth() - birthDate.getMonth();
 
-    if (months < 0 || (months === 0 && today.getDate() < birthDate.getDate())) {
-      return `${years - 1} years`;
+    const birthDate = new Date(dob);
+    const today = new Date("2025-03-04"); // Fixed to current date per context
+
+    // Check if the birth date is valid
+    if (isNaN(birthDate.getTime())) return "Invalid date";
+
+    let years = today.getFullYear() - birthDate.getFullYear();
+    let months = today.getMonth() - birthDate.getMonth();
+    let days = today.getDate() - birthDate.getDate();
+
+    // Adjust if the birthday hasn't occurred this year
+    if (months < 0 || (months === 0 && days < 0)) {
+      years--;
+      months += 12;
     }
-    return `${years} years`;
+
+    // Adjust days if negative
+    if (days < 0) {
+      const lastMonth = new Date(
+        today.getFullYear(),
+        today.getMonth() - 1,
+        birthDate.getDate()
+      );
+      days = Math.floor(
+        (today.getTime() - lastMonth.getTime()) / (1000 * 60 * 60 * 24)
+      );
+      months--;
+    }
+
+    // Decide output based on age
+    if (years >= 1) {
+      return `${years} year${years !== 1 ? "s" : ""}`;
+    } else {
+      const totalMonths = months;
+      if (totalMonths >= 1) {
+        return `${totalMonths} month${totalMonths !== 1 ? "s" : ""}`;
+      } else {
+        const totalDays = Math.floor(
+          (today.getTime() - birthDate.getTime()) / (1000 * 60 * 60 * 24)
+        );
+        return `${totalDays} day${totalDays !== 1 ? "s" : ""}`;
+      }
+    }
   };
 
   const handleRemovePet = async () => {
