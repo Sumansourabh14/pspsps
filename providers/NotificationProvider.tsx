@@ -29,64 +29,74 @@ async function fetchReminders(userId: string) {
 
 async function scheduleRecurringNotifications(userId: string) {
   try {
-    // Clear existing notifications
-    await Notifications.cancelAllScheduledNotificationsAsync();
+    // Fetch existing notifications from DB to avoid duplicates
+    const { data: existingNotifications, error: fetchError } = await supabase
+      .from("notifications")
+      .select("notification_id, reminder_id") // Assuming you add reminder_id to your notifications table
+      .eq("user_id", userId);
+
+    if (fetchError) {
+      console.error("Error fetching existing notifications:", fetchError);
+      return;
+    }
+
+    const existingNotificationIds = new Set(
+      existingNotifications?.map((n) => n.notification_id) || []
+    );
+
+    // Clear only notifications not in our DB (optional, depending on your needs)
+    const scheduled = await Notifications.getAllScheduledNotificationsAsync();
+    for (const notif of scheduled) {
+      if (!existingNotificationIds.has(notif.identifier)) {
+        await Notifications.cancelScheduledNotificationAsync(notif.identifier);
+      }
+    }
 
     // Fetch reminders from Supabase
     const reminders = await fetchReminders(userId);
+    if (!reminders) return;
 
-    // Schedule notification for each reminder
     const scheduledIds = [];
-    for (const reminder of reminders ?? []) {
+
+    for (const reminder of reminders) {
       let triggerDate;
 
-      // Handle "once" frequency with start_date and optional time
       if (reminder.frequency === "once" && reminder.start_date) {
         triggerDate = new Date(reminder.start_date);
-
-        // If time is specified, include it
         if (reminder.time) {
           const [hours, minutes, seconds] = reminder.time.split(":");
-          triggerDate.setHours(parseInt(hours));
-          triggerDate.setMinutes(parseInt(minutes));
-          triggerDate.setSeconds(parseInt(seconds || 0));
+          triggerDate.setHours(
+            parseInt(hours),
+            parseInt(minutes),
+            parseInt(seconds || 0)
+          );
         } else {
-          // If no time specified, set to start of day (midnight)
           triggerDate.setHours(0, 0, 0, 0);
         }
       } else {
-        // For other frequencies, use next_due
         triggerDate = new Date(reminder.next_due);
       }
 
-      // Get current date and time
       const now = new Date();
-
-      // For logging/debugging
-      // console.log({
-      //   title: reminder.title,
-      //   triggerDate: triggerDate.toISOString(),
-      //   currentTime: now.toISOString(),
-      // });
-
-      // Only skip if trigger date is strictly before today
-      // For same-day notifications, allow if time is in the future
       const isSameDay = triggerDate.toDateString() === now.toDateString();
       if (triggerDate < now && !isSameDay) {
-        // console.log(`Skipping ${reminder.title} - date is in the past`);
+        console.log(`Skipping ${reminder.title} - date is in the past`);
         continue;
       }
 
-      try {
-        // console.log(`triggerDate.getTime()-----------`, triggerDate.getTime());
-        const notificationId = await Notifications.scheduleNotificationAsync({
+      // Check if this reminder already has a scheduled notification
+      const existingNotification = existingNotifications?.find(
+        (n) => n.reminder_id === reminder.id
+      );
+
+      let notificationId = existingNotification?.notification_id;
+
+      if (!notificationId) {
+        // Schedule new notification only if it doesn't exist
+        notificationId = await Notifications.scheduleNotificationAsync({
           content: {
             title: reminder.title,
-            body: `${
-              !!reminder.notes
-                ? reminder.notes
-                : `Time for ${reminder.type} (Pet ID: ${reminder.pet_id})`
-            } `,
+            body: reminder.notes,
           },
           trigger: {
             type: Notifications.SchedulableTriggerInputTypes.DATE,
@@ -94,44 +104,37 @@ async function scheduleRecurringNotifications(userId: string) {
           },
         });
 
-        scheduledIds.push(notificationId);
-
+        // Store in DB only if newly scheduled
         const payload = {
           notification_id: notificationId,
-          type: Notifications.SchedulableTriggerInputTypes.DATE,
+          reminder_id: reminder.id, // Add this to link to the reminder
+          type: reminder.type,
           title: reminder.title,
-          body: !!reminder.notes && reminder.notes,
+          body: reminder.notes,
           time: triggerDate.getTime(),
-          user_id: reminder.user_id,
+          user_id: userId,
         };
 
-        const { data, error, status } = await supabase
+        const { error, status } = await supabase
           .from("notifications")
           .insert(payload);
 
         if (status === 201) {
-          console.log(`Notification stored in DB.`);
+          console.log(`Notification stored in DB for ${reminder.title}`);
+        } else if (error) {
+          console.error(`Failed to store notification: ${error.message}`);
         }
-        if (error) {
-          console.error(`Notification couldn't be stored in DB.`);
-        }
-
-        // console.log(
-        //   `Scheduled "${reminder.title}" for ${triggerDate} with ID: ${notificationId}`
-        // );
-      } catch (e) {
-        // console.error(`Failed to schedule ${reminder.title}:`, e);
-        continue;
       }
-    }
 
-    // Verify all scheduled notifications
-    const scheduled = await Notifications.getAllScheduledNotificationsAsync();
-    // console.log("Currently scheduled notifications:", scheduled);
+      scheduledIds.push(notificationId);
+      console.log(
+        `Scheduled "${reminder.title}" for ${triggerDate} with ID: ${notificationId}`
+      );
+    }
 
     return scheduledIds;
   } catch (error) {
-    // console.error("Error scheduling notifications:", error);
+    console.error("Error scheduling notifications:", error);
     throw error;
   }
 }
@@ -190,8 +193,7 @@ const NotificationProvider = ({ children }: PropsWithChildren) => {
   }, []);
 
   useEffect(() => {
-    if (!!session) {
-      // Schedule notifications once permissions are granted
+    if (session) {
       const setupNotifications = async () => {
         try {
           const hasPermission = await registerForPushNotificationsAsync();

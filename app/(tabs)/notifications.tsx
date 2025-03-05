@@ -1,4 +1,5 @@
-import { View, Text } from "@/components/Themed";
+import { Text, View } from "@/components/Themed";
+import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/AuthProvider";
 import { Redirect } from "expo-router";
 import { useEffect, useState } from "react";
@@ -13,56 +14,31 @@ interface Notification {
   read: boolean;
 }
 
-interface User {
-  full_name: string;
-}
-
 export default function NotificationsScreen() {
   const { session, loading } = useAuth();
-  const [user, setUser] = useState<User | null>(null);
-
-  // Dummy notifications data
-  const notifications: Notification[] = [
-    {
-      id: "1",
-      title: "New Message",
-      message: "John Doe sent you a new message",
-      time: "2 hours ago",
-      read: false,
-    },
-    {
-      id: "2",
-      title: "Friend Request",
-      message: "Jane Smith wants to connect",
-      time: "4 hours ago",
-      read: false,
-    },
-    {
-      id: "3",
-      title: "Event Reminder",
-      message: "Pet Playdate tomorrow at 2 PM",
-      time: "Yesterday",
-      read: true,
-    },
-    {
-      id: "4",
-      title: "Profile Update",
-      message: "Your profile photo was updated",
-      time: "2 days ago",
-      read: true,
-    },
-  ];
+  const [notifications, setNotifications] = useState<Notification | null>(null);
 
   useEffect(() => {
     let mounted = true;
 
-    const fetchLoggedInUser = async () => {
+    const fetchNotifications = async () => {
+      const now = Date.now(); // Current time in milliseconds
+
+      const { data, error } = await supabase
+        .from("notifications")
+        .select("*")
+        .eq("user_id", session?.user.id)
+        .lte("time", now); // time <= now (past or current notifications)
+
       if (mounted) {
-        // Add your user fetch logic here if needed
+        if (error) {
+          console.error("some error");
+        }
+        setNotifications(data);
       }
     };
 
-    fetchLoggedInUser();
+    fetchNotifications();
 
     return () => {
       mounted = false;
@@ -79,12 +55,43 @@ export default function NotificationsScreen() {
     return <Redirect href={"/"} />;
   }
 
+  function getRelativeTime(timestamps) {
+    const now = Date.now(); // Current time in milliseconds
+    const diffMs = now - timestamps; // Difference in milliseconds
+
+    console.log({ now, timestamps });
+
+    const seconds = Math.floor(diffMs / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    const weeks = Math.floor(days / 7);
+    const months = Math.floor(days / 30); // Approximate
+    const years = Math.floor(days / 365); // Approximate
+
+    if (seconds < 60) {
+      return "just now";
+    } else if (minutes < 60) {
+      return `${minutes} minute${minutes === 1 ? "" : "s"} ago`;
+    } else if (hours < 24) {
+      return `${hours} hour${hours === 1 ? "" : "s"} ago`;
+    } else if (days < 7) {
+      return `${days} day${days === 1 ? "" : "s"} ago`;
+    } else if (weeks < 4) {
+      return `${weeks} week${weeks === 1 ? "" : "s"} ago`;
+    } else if (months < 12) {
+      return `${months} month${months === 1 ? "" : "s"} ago`;
+    } else {
+      return `${years} year${years === 1 ? "" : "s"} ago`;
+    }
+  }
+
   // Render individual notification item
   const renderNotification = ({ item }: { item: Notification }) => (
     <View style={[styles.notificationItem, !item.read && styles.unread]}>
       <Text style={styles.notificationTitle}>{item.title}</Text>
       <Text style={styles.notificationMessage}>{item.message}</Text>
-      <Text style={styles.notificationTime}>{item.time}</Text>
+      <Text style={styles.notificationTime}>{getRelativeTime(item.time)}</Text>
     </View>
   );
 
