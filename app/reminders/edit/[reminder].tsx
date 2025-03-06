@@ -2,7 +2,7 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/AuthProvider";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Picker } from "@react-native-picker/picker";
-import { Stack, useLocalSearchParams } from "expo-router";
+import { router, Stack, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   Alert,
@@ -122,7 +122,19 @@ const EditReminderScreen = () => {
     }
 
     if (status === 204) {
-      Alert.alert("Success", "Reminder updated successfully!");
+      Alert.alert(
+        "Success",
+        "Reminder updated successfully!",
+        [
+          {
+            text: "OK",
+            onPress: () => {
+              router.push(`/reminders`);
+            },
+          },
+        ],
+        { cancelable: false }
+      );
     }
 
     setSaving(false);

@@ -11,7 +11,7 @@ import { Picker } from "@react-native-picker/picker";
 import { supabase } from "../lib/supabase"; // Adjust path to your Supabase client setup
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Button, TextInput } from "react-native-paper";
-import { Stack } from "expo-router";
+import { router, Stack } from "expo-router";
 import { useAuth } from "@/providers/AuthProvider";
 
 // Enums from your schema
@@ -147,17 +147,26 @@ const AddReminderScreen = () => {
   const handleSave = async () => {
     setLoading(true);
 
+    // Combine startDate and time into a single Date object in local time
+    const combinedDateTime = new Date(startDate);
+    combinedDateTime.setHours(
+      time.getHours(),
+      time.getMinutes(),
+      time.getSeconds(),
+      0
+    );
+
     const reminder = {
       pet_id: petId,
       type,
-      title: title || `${type.replace("_", " ")} for pet`, // Default title
+      title: title || `${type.replace("_", " ")}`,
       frequency,
       interval: frequency === Frequency.Custom ? interval : null,
-      start_date: startDate.toISOString(),
-      end_date: endDate.toISOString(),
-      time: formatTimeForSupabase(time),
-      last_completed: null, // Initially null
-      next_due: startDate.toISOString(), // Starts at startDate
+      start_date: combinedDateTime.toISOString(), // Store full datetime
+      end_date: frequency === Frequency.Once ? null : endDate.toISOString(),
+      time: formatTimeForSupabase(time), // Still store time separately if needed
+      last_completed: null,
+      next_due: combinedDateTime.toISOString(), // Align with start_date
       notes: notes || null,
       is_active: true,
       user_id: session?.user.id,
@@ -175,7 +184,19 @@ const AddReminderScreen = () => {
     }
 
     if (status === 201) {
-      Alert.alert("Success", "Reminder added successfully!");
+      Alert.alert(
+        "Success",
+        "Reminder added successfully!",
+        [
+          {
+            text: "OK",
+            onPress: () => {
+              router.push(`/reminders`);
+            },
+          },
+        ],
+        { cancelable: false }
+      );
     }
 
     setLoading(false);
