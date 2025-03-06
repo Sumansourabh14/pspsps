@@ -22,7 +22,7 @@ export default function NotificationsScreen() {
     let mounted = true;
 
     const fetchNotifications = async () => {
-      const now = Date.now(); // Current time in milliseconds
+      const now = new Date().toISOString();
 
       const { data, error } = await supabase
         .from("notifications")
@@ -32,7 +32,7 @@ export default function NotificationsScreen() {
 
       if (mounted) {
         if (error) {
-          console.error("some error");
+          console.error(error.message);
         }
         setNotifications(data);
       }
@@ -55,11 +55,18 @@ export default function NotificationsScreen() {
     return <Redirect href={"/"} />;
   }
 
-  function getRelativeTime(timestamps) {
+  function getRelativeTime(timestamp: string) {
     const now = Date.now(); // Current time in milliseconds
-    const diffMs = now - timestamps; // Difference in milliseconds
 
-    console.log({ now, timestamps });
+    // Convert TIMESTAMPTZ string to milliseconds
+    const timestampMs = new Date(timestamp).getTime();
+
+    if (isNaN(timestampMs)) {
+      console.error(`Invalid timestamp: ${timestamp}`);
+      return "unknown time";
+    }
+
+    const diffMs = now - timestampMs; // Difference in milliseconds
 
     const seconds = Math.floor(diffMs / 1000);
     const minutes = Math.floor(seconds / 60);
@@ -69,7 +76,9 @@ export default function NotificationsScreen() {
     const months = Math.floor(days / 30); // Approximate
     const years = Math.floor(days / 365); // Approximate
 
-    if (seconds < 60) {
+    if (diffMs < 0) {
+      return "in the future"; // Handle future timestamps
+    } else if (seconds < 60) {
       return "just now";
     } else if (minutes < 60) {
       return `${minutes} minute${minutes === 1 ? "" : "s"} ago`;

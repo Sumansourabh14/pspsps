@@ -29,10 +29,10 @@ async function fetchReminders(userId: string) {
 
 async function scheduleRecurringNotifications(userId: string) {
   try {
-    // Fetch existing notifications from DB to avoid duplicates
+    // Fetch existing notifications
     const { data: existingNotifications, error: fetchError } = await supabase
       .from("notifications")
-      .select("notification_id, reminder_id") // Assuming you add reminder_id to your notifications table
+      .select("notification_id, reminder_id")
       .eq("user_id", userId);
 
     if (fetchError) {
@@ -44,7 +44,6 @@ async function scheduleRecurringNotifications(userId: string) {
       existingNotifications?.map((n) => n.notification_id) || []
     );
 
-    // Clear only notifications not in our DB (optional, depending on your needs)
     const scheduled = await Notifications.getAllScheduledNotificationsAsync();
     for (const notif of scheduled) {
       if (!existingNotificationIds.has(notif.identifier)) {
@@ -52,7 +51,6 @@ async function scheduleRecurringNotifications(userId: string) {
       }
     }
 
-    // Fetch reminders from Supabase
     const reminders = await fetchReminders(userId);
     if (!reminders) return;
 
@@ -61,20 +59,11 @@ async function scheduleRecurringNotifications(userId: string) {
     for (const reminder of reminders) {
       let triggerDate;
 
+      // Use start_date or next_due as the full datetime
       if (reminder.frequency === "once" && reminder.start_date) {
-        triggerDate = new Date(reminder.start_date);
-        if (reminder.time) {
-          const [hours, minutes, seconds] = reminder.time.split(":");
-          triggerDate.setHours(
-            parseInt(hours),
-            parseInt(minutes),
-            parseInt(seconds || 0)
-          );
-        } else {
-          triggerDate.setHours(0, 0, 0, 0);
-        }
+        triggerDate = new Date(reminder.start_date); // Full datetime from DB
       } else {
-        triggerDate = new Date(reminder.next_due);
+        triggerDate = new Date(reminder.next_due); // Full datetime from DB
       }
 
       const now = new Date();
@@ -84,7 +73,6 @@ async function scheduleRecurringNotifications(userId: string) {
         continue;
       }
 
-      // Check if this reminder already has a scheduled notification
       const existingNotification = existingNotifications?.find(
         (n) => n.reminder_id === reminder.id
       );
@@ -92,7 +80,6 @@ async function scheduleRecurringNotifications(userId: string) {
       let notificationId = existingNotification?.notification_id;
 
       if (!notificationId) {
-        // Schedule new notification only if it doesn't exist
         notificationId = await Notifications.scheduleNotificationAsync({
           content: {
             title: reminder.title,
@@ -100,18 +87,17 @@ async function scheduleRecurringNotifications(userId: string) {
           },
           trigger: {
             type: Notifications.SchedulableTriggerInputTypes.DATE,
-            date: triggerDate.getTime(),
+            date: triggerDate.getTime(), // Local time in milliseconds
           },
         });
 
-        // Store in DB only if newly scheduled
         const payload = {
           notification_id: notificationId,
-          reminder_id: reminder.id, // Add this to link to the reminder
+          reminder_id: reminder.id,
           type: reminder.type,
           title: reminder.title,
           body: reminder.notes,
-          time: triggerDate.getTime(),
+          time: triggerDate.toISOString(),
           user_id: userId,
         };
 
@@ -128,7 +114,9 @@ async function scheduleRecurringNotifications(userId: string) {
 
       scheduledIds.push(notificationId);
       console.log(
-        `Scheduled "${reminder.title}" for ${triggerDate} with ID: ${notificationId}`
+        `Scheduled "${
+          reminder.title
+        }" for ${triggerDate.toISOString()} with ID: ${notificationId}`
       );
     }
 
