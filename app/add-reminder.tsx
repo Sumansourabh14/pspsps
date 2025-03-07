@@ -91,31 +91,31 @@ const frequencyOptions = [
     label: "Daily",
     value: "daily",
   },
-  {
-    id: 2,
-    label: "Weekly",
-    value: "weekly",
-  },
-  {
-    id: 3,
-    label: "Monthly",
-    value: "monthly",
-  },
-  {
-    id: 4,
-    label: "Yearly",
-    value: "yearly",
-  },
+  // {
+  //   id: 2,
+  //   label: "Weekly",
+  //   value: "weekly",
+  // },
+  // {
+  //   id: 3,
+  //   label: "Monthly",
+  //   value: "monthly",
+  // },
+  // {
+  //   id: 4,
+  //   label: "Yearly",
+  //   value: "yearly",
+  // },
   {
     id: 5,
     label: "Once",
     value: "once",
   },
-  {
-    id: 6,
-    label: "Custom",
-    value: "custom",
-  },
+  // {
+  //   id: 6,
+  //   label: "Custom",
+  //   value: "custom",
+  // },
 ];
 
 const AddReminderScreen = () => {

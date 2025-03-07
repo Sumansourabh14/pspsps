@@ -44,6 +44,7 @@ async function scheduleRecurringNotifications(userId: string) {
       existingNotifications?.map((n) => n.notification_id) || []
     );
 
+    // Clean up orphaned notifications
     const scheduled = await Notifications.getAllScheduledNotificationsAsync();
     for (const notif of scheduled) {
       if (!existingNotificationIds.has(notif.identifier)) {
@@ -57,67 +58,140 @@ async function scheduleRecurringNotifications(userId: string) {
     const scheduledIds = [];
 
     for (const reminder of reminders) {
-      let triggerDate;
-
-      // Use start_date or next_due as the full datetime
-      if (reminder.frequency === "once" && reminder.start_date) {
-        triggerDate = new Date(reminder.start_date); // Full datetime from DB
-      } else {
-        triggerDate = new Date(reminder.next_due); // Full datetime from DB
-      }
-
+      // Parse the time (e.g., "20:40" -> { hour: 20, minute: 40 })
+      const [hour, minute, seconds] = reminder.time.split(":").map(Number);
       const now = new Date();
-      const isSameDay = triggerDate.toDateString() === now.toDateString();
-      if (triggerDate < now && !isSameDay) {
-        console.log(`Skipping ${reminder.title} - date is in the past`);
-        continue;
-      }
 
-      const existingNotification = existingNotifications?.find(
-        (n) => n.reminder_id === reminder.id
-      );
+      // Handle one-time notification
+      if (reminder.frequency === "once" && reminder.start_date) {
+        const triggerDate = new Date(reminder.start_date);
+        triggerDate.setHours(hour, minute, 0, 0); // Set to specified time
 
-      let notificationId = existingNotification?.notification_id;
+        const isSameDay = triggerDate.toDateString() === now.toDateString();
+        if (triggerDate < now && !isSameDay) {
+          console.log(`Skipping ${reminder.title} - date is in the past`);
+          continue;
+        }
 
-      if (!notificationId) {
-        notificationId = await Notifications.scheduleNotificationAsync({
-          content: {
+        const existingNotification = existingNotifications?.find(
+          (n) => n.reminder_id === reminder.id
+        );
+        let notificationId = existingNotification?.notification_id;
+
+        if (!notificationId) {
+          notificationId = await Notifications.scheduleNotificationAsync({
+            content: {
+              title: reminder.title,
+              body: reminder.notes,
+            },
+            trigger: {
+              type: Notifications.SchedulableTriggerInputTypes.DATE,
+              date: triggerDate.getTime(), // One-time trigger
+            },
+          });
+
+          const payload = {
+            notification_id: notificationId,
+            reminder_id: reminder.id,
+            type: reminder.type,
             title: reminder.title,
             body: reminder.notes,
-          },
-          trigger: {
-            type: Notifications.SchedulableTriggerInputTypes.DATE,
-            date: triggerDate.getTime(), // Local time in milliseconds
-          },
-        });
+            time: triggerDate.toISOString(),
+            user_id: userId,
+          };
 
-        const payload = {
-          notification_id: notificationId,
-          reminder_id: reminder.id,
-          type: reminder.type,
-          title: reminder.title,
-          body: reminder.notes,
-          time: triggerDate.toISOString(),
-          user_id: userId,
-        };
+          const { error, status } = await supabase
+            .from("notifications")
+            .insert(payload);
 
-        const { error, status } = await supabase
-          .from("notifications")
-          .insert(payload);
-
-        if (status === 201) {
-          console.log(`Notification stored in DB for ${reminder.title}`);
-        } else if (error) {
-          console.error(`Failed to store notification: ${error.message}`);
+          if (status === 201) {
+            console.log(`Notification stored in DB for ${reminder.title}`);
+          } else if (error) {
+            console.error(`Failed to store notification: ${error.message}`);
+          }
         }
+
+        scheduledIds.push(notificationId);
+        console.log(
+          `Scheduled one-time "${
+            reminder.title
+          }" for ${triggerDate.toISOString()} with ID: ${notificationId}`
+        );
       }
 
-      scheduledIds.push(notificationId);
-      console.log(
-        `Scheduled "${
-          reminder.title
-        }" for ${triggerDate.toISOString()} with ID: ${notificationId}`
-      );
+      // Handle daily notification
+      else if (
+        reminder.frequency === "daily" &&
+        reminder.start_date &&
+        reminder.end_date
+      ) {
+        let currentDate = new Date(reminder.start_date);
+        currentDate.setHours(hour, minute, 0, 0); // Set to specified time
+        const endDate = new Date(reminder.end_date);
+        endDate.setHours(hour, minute, 0, 0);
+
+        const existingNotification = existingNotifications?.find(
+          (n) => n.reminder_id === reminder.id
+        );
+        let notificationIds = existingNotification
+          ? [existingNotification.notification_id]
+          : [];
+
+        if (!existingNotification) {
+          // Option 1: Schedule individual notifications for each day
+          while (currentDate <= endDate) {
+            const isSameDay = currentDate.toDateString() === now.toDateString();
+            if (currentDate < now && !isSameDay) {
+              currentDate.setDate(currentDate.getDate() + 1); // Skip past dates
+              continue;
+            }
+
+            const notificationId =
+              await Notifications.scheduleNotificationAsync({
+                content: {
+                  title: reminder.title,
+                  body: reminder.notes,
+                },
+                trigger: {
+                  type: Notifications.SchedulableTriggerInputTypes.DATE,
+                  date: currentDate.getTime(), // One-time trigger per day
+                },
+              });
+
+            const payload = {
+              notification_id: notificationId,
+              reminder_id: reminder.id,
+              type: reminder.type,
+              title: reminder.title,
+              body: reminder.notes,
+              time: currentDate.toISOString(),
+              user_id: userId,
+            };
+
+            const { error, status } = await supabase
+              .from("notifications")
+              .insert(payload);
+
+            if (status === 201) {
+              console.log(
+                `Daily notification stored for ${
+                  reminder.title
+                } on ${currentDate.toISOString()}`
+              );
+            } else if (error) {
+              console.error(`Failed to store notification: ${error.message}`);
+            }
+
+            notificationIds.push(notificationId);
+            currentDate.setDate(currentDate.getDate() + 1); // Next day
+          }
+        }
+
+        scheduledIds.push(...notificationIds);
+        console.log(
+          `Scheduled daily "${reminder.title}" from ${reminder.start_date} to ${reminder.end_date} with IDs: ${notificationIds}`
+        );
+      }
     }
 
     return scheduledIds;
