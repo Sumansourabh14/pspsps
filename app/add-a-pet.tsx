@@ -151,10 +151,18 @@ export default function AddPetScreen() {
       gender,
       avatar,
     };
-    const { status, error } = await supabase.from("pets").insert(updates);
+    const { data, status, error } = await supabase
+      .from("pets")
+      .insert(updates)
+      .select()
+      .single();
     if (status === 201) {
+      console.log(data);
       Alert.alert("Pet added successfully!");
-      router.push("/");
+      router.push({
+        pathname: "/ai-assistance",
+        params: data,
+      });
     }
     if (error) Alert.alert(error.message);
     setLoading(false);
