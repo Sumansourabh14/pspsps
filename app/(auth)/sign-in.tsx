@@ -2,14 +2,7 @@ import { supabase } from "@/lib/supabase";
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import { useState } from "react";
-import {
-  Alert,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  ImageBackground,
-} from "react-native";
+import { Alert, ImageBackground, StyleSheet, Text, View } from "react-native";
 import { Button, TextInput, useTheme } from "react-native-paper";
 
 export default function SignInScreen() {

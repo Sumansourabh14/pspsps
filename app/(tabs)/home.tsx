@@ -109,7 +109,7 @@ export default function HomeScreen() {
         renderItem={({ item, index }) => <PetCard pet={item} index={index} />}
         numColumns={2}
         ListEmptyComponent={
-          <Text style={styles.emptyText}>No pets yet? Add one now!</Text>
+          <Text style={styles.emptyText}>No pets yet. Add one now!</Text>
         }
         contentContainerStyle={styles.listContent}
       />
@@ -194,6 +194,7 @@ const styles = StyleSheet.create({
     fontFamily: "NotoSans-Regular",
   },
   emptyText: {
+    fontFamily: "NotoSans-Regular",
     textAlign: "center",
     marginTop: 20,
     fontSize: 16,
