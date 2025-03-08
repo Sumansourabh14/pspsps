@@ -28,7 +28,8 @@ export default function NotificationsScreen() {
         .from("notifications")
         .select("*")
         .eq("user_id", session?.user.id)
-        .lte("time", now); // time <= now (past or current notifications)
+        .lte("time", now)
+        .order("time", { ascending: false }); // time <= now (past or current notifications)
 
       if (mounted) {
         if (error) {
