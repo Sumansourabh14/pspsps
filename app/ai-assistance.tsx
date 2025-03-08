@@ -1,9 +1,10 @@
-import { StyleSheet, Text, View } from "react-native";
-import React, { useState } from "react";
-import { Stack, useLocalSearchParams } from "expo-router";
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import { Button } from "react-native-paper";
 import { supabase } from "@/lib/supabase";
+import { Ionicons } from "@expo/vector-icons";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { Link, Stack, useLocalSearchParams } from "expo-router";
+import React, { useState } from "react";
+import { FlatList, StyleSheet, View } from "react-native";
+import { Button, Card, Text } from "react-native-paper";
 
 const API_KEY = process.env.EXPO_PUBLIC_GEMINI_KEY;
 
@@ -31,7 +32,26 @@ const reminder = {
   is_active: true,
 };
 
+interface Reminder {
+  id: number;
+  created_at: Date;
+  title: string;
+  type: string;
+  frequency: string;
+  start_date: Date;
+  next_due: Date;
+  end_date: Date;
+  is_active: boolean;
+  notes?: string;
+  last_completed?: Date;
+  interval?: number;
+  user_id: string;
+  pet_id: string;
+  time: string;
+}
+
 const AiAssistance = () => {
+  const [reminders, setReminders] = useState<Reminder[] | null>(null);
   const [loading, setLoading] = useState(false);
 
   const params = useLocalSearchParams();
@@ -108,6 +128,27 @@ const AiAssistance = () => {
           .select();
 
         console.log(`supabase bulk insert`, data, error);
+
+        if (error) {
+          console.error(error.message);
+        }
+
+        setReminders(data);
+      } else {
+        console.log("Reminders - else-", parsedResponses[0].reminders);
+
+        const { data, error } = await supabase
+          .from("reminders")
+          .insert(parsedResponses[0].reminders)
+          .select();
+
+        console.log(`supabase bulk insert`, data, error);
+
+        if (error) {
+          console.error(error.message);
+        }
+
+        setReminders(data);
       }
 
       setLoading(false);
@@ -117,22 +158,125 @@ const AiAssistance = () => {
     }
   };
 
+  const findPetNameById = async (petId: string) => {
+    if (!petId) return;
+
+    const { data, error } = await supabase
+      .from("pets")
+      .select("*")
+      .eq("id", petId)
+      .single();
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    return data.name || `Species: ${data.species}`;
+  };
+
   return (
     <>
-      <Stack.Screen options={{ title: "Ask AI" }} />
+      <Stack.Screen options={{ title: "Suggestions for your pet" }} />
       <View style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>Do you want suggestions?</Text>
-        </View>
-        <Button
-          mode="contained"
-          onPress={getAIResponse}
-          //   style={styles.saveButton}
-          //   labelStyle={styles.saveButtonLabel}
-          loading={loading}
-        >
-          {loading ? "Generating response..." : "Yes"}
-        </Button>
+        {!!reminders ? (
+          <View style={styles.header}>
+            <Text style={styles.headerTitle}>Automatic Reminders</Text>
+            <Text style={styles.headerSubtitle}>
+              You can always edit them later on the Reminders screen.
+            </Text>
+          </View>
+        ) : (
+          <View style={styles.header}>
+            <Text style={styles.headerTitle}>
+              Do you want to set automatic reminders?
+            </Text>
+            <Text style={styles.headerSubtitle}>
+              Get AI-powered suggestions for your pet
+            </Text>
+          </View>
+        )}
+
+        {!!reminders ? (
+          <View style={styles.buttonContainer}>
+            <Link href={`/reminders`} asChild>
+              <Button
+                mode="contained"
+                style={styles.button}
+                labelStyle={styles.buttonLabel}
+              >
+                Reminders
+              </Button>
+            </Link>
+            {!loading && (
+              <Link href={`/`} asChild>
+                <Button mode="outlined" style={styles.button}>
+                  Home
+                </Button>
+              </Link>
+            )}
+          </View>
+        ) : (
+          <View style={styles.buttonContainer}>
+            <Button
+              mode="contained"
+              onPress={getAIResponse}
+              style={[styles.button, styles.yesButton]}
+              labelStyle={styles.buttonLabel}
+              loading={loading}
+              disabled={loading}
+              contentStyle={styles.buttonContent}
+            >
+              Yes
+            </Button>
+
+            {!loading && (
+              <Link href={`/`} asChild>
+                <Button mode="outlined" style={styles.button}>
+                  No
+                </Button>
+              </Link>
+            )}
+          </View>
+        )}
+
+        <FlatList
+          data={reminders}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item, index }) => (
+            <Card style={styles.card}>
+              <Card.Content style={styles.cardContent}>
+                <Ionicons
+                  name={item.is_active ? "alarm" : "alarm-outline"}
+                  size={24}
+                  color={item.is_active ? "#4CAF50" : "#666"}
+                  style={styles.cardIcon}
+                />
+                <View style={styles.cardTextContainer}>
+                  {!!item.title && (
+                    <Text variant="titleMedium" style={styles.cardTitle}>
+                      {item.title}
+                    </Text>
+                  )}
+                  <Text
+                    variant="bodyMedium"
+                    style={styles.cardNotes}
+                    numberOfLines={2}
+                  >
+                    {item.notes || "No notes"}
+                  </Text>
+                  <Text variant="bodyMedium" style={styles.cardNotes}>
+                    {findPetNameById(item.pet_id)}
+                  </Text>
+                  <Text variant="bodySmall" style={styles.cardFrequency}>
+                    {item.frequency}
+                  </Text>
+                </View>
+              </Card.Content>
+            </Card>
+          )}
+          numColumns={1}
+        />
       </View>
     </>
   );
@@ -143,17 +287,104 @@ export default AiAssistance;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 12,
-    paddingTop: 12,
+    backgroundColor: "#F8FAFC",
+    paddingHorizontal: 20,
+    paddingTop: 20,
   },
   header: {
     alignItems: "center",
-    marginBottom: 24,
+    marginBottom: 20,
   },
   headerTitle: {
-    fontSize: 28,
+    fontSize: 32,
+    fontWeight: "700",
+    color: "#1F2937",
+    textAlign: "center",
+    marginBottom: 8,
+  },
+  headerSubtitle: {
+    fontSize: 16,
+    color: "#6B7280",
+    textAlign: "center",
+    maxWidth: 280,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 20,
+    marginBottom: 20,
+  },
+  button: {
+    borderRadius: 8,
+    paddingVertical: 6,
+    elevation: 2,
+  },
+  yesButton: {
+    backgroundColor: "#10B981",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  noButton: {
+    borderColor: "#D1D5DB",
+    borderWidth: 2,
+    backgroundColor: "transparent",
+  },
+  buttonContent: {},
+  buttonLabel: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#FFFFFF",
+  },
+  noButtonLabel: {
+    color: "#4B5563",
+  },
+  footer: {
+    position: "absolute",
+    bottom: 20,
+    left: 0,
+    right: 0,
+    alignItems: "center",
+  },
+  footerText: {
+    fontSize: 12,
+    color: "#9CA3AF",
+    fontStyle: "italic",
+  },
+  card: {
+    flex: 1,
+    margin: 8,
+    borderRadius: 8,
+    elevation: 6,
+    backgroundColor: "#fff",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    borderWidth: 0,
+  },
+  cardContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 12,
+  },
+  cardIcon: {
+    marginRight: 10,
+  },
+  cardTextContainer: {
+    flex: 1,
+  },
+  cardTitle: {
     fontWeight: "bold",
     color: "#333",
-    textAlign: "center",
+  },
+  cardNotes: {
+    color: "#666",
+    marginTop: 4,
+  },
+  cardFrequency: {
+    color: "#4CAF50",
+    marginTop: 4,
   },
 });

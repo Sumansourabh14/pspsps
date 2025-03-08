@@ -36,7 +36,7 @@ const PetCard = ({ pet, index }: { pet: Pet; index: number }) => {
             <Card.Content style={styles.cardContent}>
               <View style={styles.cardText}>
                 <Text variant="titleMedium" style={styles.petName}>
-                  {pet.name}
+                  {pet.name || `No name yet`}
                 </Text>
                 <Text variant="bodyMedium" style={styles.petSpecies}>
                   {pet.species}
@@ -109,6 +109,10 @@ export default function HomeScreen() {
         }
         contentContainerStyle={styles.listContent}
       />
+
+      <Link href="/ai-assistance">
+        <Text>Add Pet</Text>
+      </Link>
 
       <Link href="/add-a-pet" asChild>
         <TouchableOpacity style={styles.floatingButton}>
