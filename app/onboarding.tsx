@@ -139,7 +139,7 @@ export default function OnboardingScreen() {
               contentStyle={styles.buttonContent}
               disabled={isScrolling} // Disable button during animation
             >
-              {step === 3 ? "Get Started" : "Next"}
+              {step === 3 ? "Let's Go!" : "Next"}
             </Button>
           </View>
 
@@ -191,10 +191,10 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 36,
-    fontWeight: "bold",
     color: "#fff",
     textAlign: "center",
     marginBottom: 16,
+    fontFamily: "PlayfairDisplay-Bold",
   },
   subtitle: {
     fontSize: 18,
@@ -202,6 +202,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     lineHeight: 24,
     paddingHorizontal: 20,
+    fontFamily: "NotoSans-Regular",
   },
   buttonContainer: {
     flexDirection: "row",
@@ -218,8 +219,8 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   buttonLabel: {
+    fontFamily: "NotoSans-SemiBold",
     fontSize: 18,
-    fontWeight: "600",
     color: "#2E7D32",
   },
   secondaryButton: {
@@ -228,8 +229,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   secondaryButtonLabel: {
+    fontFamily: "NotoSans-SemiBold",
     fontSize: 18,
-    fontWeight: "600",
     color: "#fff",
   },
   stepIndicator: {

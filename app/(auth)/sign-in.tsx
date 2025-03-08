@@ -2,14 +2,7 @@ import { supabase } from "@/lib/supabase";
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import { useState } from "react";
-import {
-  Alert,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  ImageBackground,
-} from "react-native";
+import { Alert, ImageBackground, StyleSheet, Text, View } from "react-native";
 import { Button, TextInput, useTheme } from "react-native-paper";
 
 export default function SignInScreen() {
@@ -33,7 +26,7 @@ export default function SignInScreen() {
     <ImageBackground
       source={{
         uri: "https://images.unsplash.com/photo-1592194996308-7b43878e84a6?auto=format&fit=crop&q=80",
-      }} // Pet-themed background
+      }}
       style={styles.background}
     >
       <View style={styles.overlay} />
@@ -115,7 +108,7 @@ const styles = StyleSheet.create({
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.3)", // Subtle overlay for readability
+    backgroundColor: "rgba(0,0,0,0.3)",
   },
   container: {
     flex: 1,
@@ -129,12 +122,13 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   title: {
+    fontFamily: "PlayfairDisplay-Bold", // Heading
     fontSize: 36,
-    fontWeight: "bold",
     color: "#ffffff",
     marginTop: 10,
   },
   subtitle: {
+    fontFamily: "NotoSans-Regular", // Regular text
     fontSize: 16,
     color: "#ffffff",
     opacity: 0.9,
@@ -153,30 +147,22 @@ const styles = StyleSheet.create({
   input: {
     marginBottom: 15,
     backgroundColor: "#fff",
-  },
-  forgotPassword: {
-    alignSelf: "flex-end",
-    marginBottom: 20,
-  },
-  forgotText: {
-    color: "#4CAF50",
-    fontSize: 14,
-    fontWeight: "500",
+    fontFamily: "NotoSans-Regular", // Regular text
   },
   button: {
-    backgroundColor: "#4CAF50", // Pet-friendly green
+    backgroundColor: "#4CAF50",
     borderRadius: 8,
     marginTop: 8,
   },
   buttonDisabled: {
-    backgroundColor: "#CCCCCC", // Disabled state color
+    backgroundColor: "#CCCCCC",
   },
   buttonContent: {
     paddingVertical: 8,
   },
   buttonLabel: {
+    fontFamily: "NotoSans-Bold", // Regular text
     fontSize: 18,
-    fontWeight: "600",
     color: "#fff",
   },
   signupContainer: {
@@ -185,12 +171,13 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   signupText: {
+    fontFamily: "NotoSans-Regular", // Regular text
     fontSize: 14,
     color: "#666",
   },
   signupLink: {
+    fontFamily: "NotoSans-Bold", // Regular text
     fontSize: 14,
     color: "#4CAF50",
-    fontWeight: "bold",
   },
 });

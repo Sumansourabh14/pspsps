@@ -29,7 +29,14 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
-    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+    "NotoSans-Regular": require("../assets/fonts/NotoSans-Regular.ttf"),
+    "NotoSans-SemiBold": require("../assets/fonts/NotoSans-SemiBold.ttf"),
+    "NotoSans-Bold": require("../assets/fonts/NotoSans-Bold.ttf"),
+    "NotoSans-Black": require("../assets/fonts/NotoSans-Black.ttf"),
+    "PlayfairDisplay-Black": require("../assets/fonts/PlayfairDisplay-Black.ttf"),
+    "PlayfairDisplay-Bold": require("../assets/fonts/PlayfairDisplay-Bold.ttf"),
+    "PlayfairDisplay-Medium": require("../assets/fonts/PlayfairDisplay-Medium.ttf"),
+    "PlayfairDisplay-Regular": require("../assets/fonts/PlayfairDisplay-Regular.ttf"),
     ...FontAwesome.font,
   });
 

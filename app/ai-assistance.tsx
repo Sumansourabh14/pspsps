@@ -180,7 +180,14 @@ const AiAssistance = () => {
 
   return (
     <>
-      <Stack.Screen options={{ title: "Suggestions for your pet" }} />
+      <Stack.Screen
+        options={{
+          title: "Suggestions for your pet",
+          headerTitleStyle: {
+            fontFamily: "NotoSans-Black",
+          },
+        }}
+      />
       <View style={styles.container}>
         {!!reminders ? (
           <View style={styles.header}>
@@ -235,7 +242,13 @@ const AiAssistance = () => {
 
             {!loading && (
               <Link href={`/`} asChild>
-                <Button mode="outlined" style={styles.button}>
+                <Button
+                  mode="outlined"
+                  style={styles.button}
+                  labelStyle={{
+                    fontFamily: "NotoSans-Bold",
+                  }}
+                >
                   No
                 </Button>
               </Link>
@@ -299,17 +312,17 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   headerTitle: {
-    fontSize: 32,
-    fontWeight: "700",
+    fontSize: 28,
+    fontFamily: "NotoSans-Bold",
     color: "#1F2937",
     textAlign: "center",
     marginBottom: 8,
   },
   headerSubtitle: {
+    fontFamily: "NotoSans-Regular",
     fontSize: 16,
     color: "#6B7280",
     textAlign: "center",
-    maxWidth: 280,
   },
   buttonContainer: {
     flexDirection: "row",
@@ -336,12 +349,13 @@ const styles = StyleSheet.create({
   },
   buttonContent: {},
   buttonLabel: {
+    fontFamily: "NotoSans-Bold",
     fontSize: 16,
-    fontWeight: "600",
     color: "#FFFFFF",
   },
   noButtonLabel: {
     color: "#4B5563",
+    fontFamily: "NotoSans-Bold",
   },
   footer: {
     position: "absolute",
