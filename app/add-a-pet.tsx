@@ -396,7 +396,13 @@ export default function AddPetScreen() {
                 renderItem={({ item }) => (
                   <YesOrNoCard
                     item={item}
-                    handlePress={() => setSelectedChoice(item.type)}
+                    handlePress={() => {
+                      setSelectedChoice(item.type);
+                      if (item.type === "no") {
+                        setDate(null); // Reset date to null if "No" is selected
+                        setAge(null); // Optionally reset age too
+                      }
+                    }}
                     isSelected={selectedChoice === item.type}
                   />
                 )}
