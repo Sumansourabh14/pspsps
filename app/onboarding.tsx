@@ -10,6 +10,7 @@ import {
 import { Button } from "react-native-paper";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, Stack } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { width } = Dimensions.get("window");
 
@@ -19,7 +20,7 @@ export default function OnboardingScreen() {
   const scrollViewRef = useRef(null);
   const [isScrolling, setIsScrolling] = useState(false);
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (step < 3) {
       setIsScrolling(true);
       scrollViewRef.current.scrollTo({ x: width * step, animated: true });
@@ -30,10 +31,17 @@ export default function OnboardingScreen() {
       }, 300); // Match this with your animation duration
     } else {
       setLoading(true);
-      setTimeout(() => {
+      try {
+        await AsyncStorage.setItem("hasCompletedOnboarding", "true");
+
+        setTimeout(() => {
+          setLoading(false);
+          router.push(`/sign-in`);
+        }, 1000);
+      } catch (error) {
+        console.error("Error saving onboarding status:", error);
         setLoading(false);
-        router.push(`/sign-in`);
-      }, 1000);
+      }
     }
   };
 
