@@ -82,7 +82,9 @@ const AiAssistance = () => {
     If frequency is "daily", start_date and end_date must exist and they both should be of type timestamptz (format: 2025-03-07 15:41:00+00).
     Use the user_id and attach it to every reminder object that you create inside the JSON. type is uuid.
     Use the id and attach it to every reminder object that you create inside the JSON as pet_id. type is int8
-    For a 'fish' pet, do not include reminder of these types: nail_cutting, litter_cleaning, vaccination, playtime`;
+    For a 'fish' pet, do not include reminder of these types: nail_cutting, litter_cleaning, vaccination, playtime
+    
+    Only respond in JSON format. No textual information.`;
 
     try {
       const result = await model.generateContent(prompt);
