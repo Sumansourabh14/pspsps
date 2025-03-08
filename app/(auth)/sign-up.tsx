@@ -131,11 +131,12 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 36,
-    fontWeight: "bold",
+    fontFamily: "PlayfairDisplay-Bold",
     color: "#ffffff",
     marginTop: 10,
   },
   subtitle: {
+    fontFamily: "NotoSans-Regular",
     fontSize: 16,
     color: "#ffffff",
     opacity: 0.9,
@@ -168,7 +169,7 @@ const styles = StyleSheet.create({
   },
   buttonLabel: {
     fontSize: 18,
-    fontWeight: "600",
+    fontFamily: "NotoSans-Bold",
     color: "#fff",
   },
   signinContainer: {
@@ -179,13 +180,15 @@ const styles = StyleSheet.create({
   signinText: {
     fontSize: 14,
     color: "#666",
+    fontFamily: "NotoSans-Regular",
   },
   signinLink: {
     fontSize: 14,
     color: "#4CAF50",
-    fontWeight: "bold",
+    fontFamily: "NotoSans-Bold",
   },
   passwordHint: {
+    fontFamily: "NotoSans-Regular",
     fontSize: 12,
     color: "#FF0000",
     marginTop: -8,
