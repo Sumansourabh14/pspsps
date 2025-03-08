@@ -151,8 +151,8 @@ const styles = StyleSheet.create({
     textShadowRadius: 5,
   },
   title: {
+    fontFamily: "PlayfairDisplay-Bold",
     fontSize: 48,
-    fontWeight: "bold",
     color: "#fff",
     letterSpacing: 1,
     textShadowColor: "rgba(0, 0, 0, 0.4)",
@@ -160,6 +160,7 @@ const styles = StyleSheet.create({
     textShadowRadius: 8,
   },
   subtitle: {
+    fontFamily: "NotoSans-Regular",
     fontSize: 18,
     color: "#fff",
     opacity: 0.9,
@@ -192,7 +193,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#fff",
     fontSize: 18,
-    fontWeight: "bold",
+    fontFamily: "NotoSans-SemiBold",
   },
   secondaryButton: {
     borderWidth: 2,
@@ -208,7 +209,7 @@ const styles = StyleSheet.create({
   secondaryButtonText: {
     color: "#4CAF50",
     fontSize: 16,
-    fontWeight: "600",
+    fontFamily: "NotoSans-SemiBold",
   },
   signinContainer: {
     flexDirection: "row",
@@ -218,11 +219,12 @@ const styles = StyleSheet.create({
   signinText: {
     fontSize: 14,
     color: "#666",
+    fontFamily: "NotoSans-Regular",
   },
   signinLink: {
     fontSize: 14,
     color: "#4CAF50",
-    fontWeight: "bold",
+    fontFamily: "NotoSans-SemiBold",
   },
 });
 
