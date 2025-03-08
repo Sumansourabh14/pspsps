@@ -1,7 +1,8 @@
-import { registerForPushNotificationsAsync } from "@/lib/notifications";
+import { registerForNotificationsPermission } from "@/lib/notifications";
 import { supabase } from "@/lib/supabase";
 import * as Notifications from "expo-notifications";
 import { PropsWithChildren, useEffect, useRef, useState } from "react";
+import { Alert, Linking } from "react-native";
 import { useAuth } from "./AuthProvider";
 
 Notifications.setNotificationHandler({
@@ -203,7 +204,6 @@ async function scheduleRecurringNotifications(userId: string) {
 }
 
 const NotificationProvider = ({ children }: PropsWithChildren) => {
-  const [expoPushToken, setExpoPushToken] = useState("");
   const [notification, setNotification] = useState<
     Notifications.Notification | undefined
   >(undefined);
@@ -213,28 +213,7 @@ const NotificationProvider = ({ children }: PropsWithChildren) => {
 
   const { session } = useAuth();
 
-  const savePushToken = async (newToken: string | undefined) => {
-    setExpoPushToken(newToken ?? "");
-
-    if (!newToken) return;
-
-    const { status } = await supabase
-      .from("profiles")
-      .update({ expo_push_token: newToken })
-      .eq("id", session?.user.id);
-
-    if (status === 204) {
-      // console.log(`ExponentPushToken added to user`);
-    }
-  };
-
   useEffect(() => {
-    // console.warn("NotificationProvider init");
-
-    registerForPushNotificationsAsync()
-      .then((token) => savePushToken(token))
-      .catch((error: any) => setExpoPushToken(`${error}`));
-
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
         setNotification(notification);
@@ -258,15 +237,20 @@ const NotificationProvider = ({ children }: PropsWithChildren) => {
   useEffect(() => {
     if (session) {
       const setupNotifications = async () => {
-        try {
-          const hasPermission = await registerForPushNotificationsAsync();
-          if (hasPermission) {
-            await scheduleRecurringNotifications(session.user.id);
-          } else {
-            console.warn("No notification permissions granted");
-          }
-        } catch (error) {
-          console.error("Error setting up notifications:", error);
+        const hasPermission = await registerForNotificationsPermission();
+        if (hasPermission) {
+          await scheduleRecurringNotifications(session.user.id);
+        } else {
+          // Provide user feedback when permissions are denied
+          Alert.alert(
+            "Notifications Disabled",
+            "You won’t receive notifications because permission was denied. You can enable them in your device settings.",
+            [
+              { text: "OK", style: "cancel" },
+              // Optional: Add a button to open settings (platform-specific)
+              { text: "Open Settings", onPress: () => Linking.openSettings() },
+            ]
+          );
         }
       };
 
