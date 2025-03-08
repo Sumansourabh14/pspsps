@@ -110,10 +110,6 @@ export default function HomeScreen() {
         contentContainerStyle={styles.listContent}
       />
 
-      <Link href="/ai-assistance">
-        <Text>Add Pet</Text>
-      </Link>
-
       <Link href="/add-a-pet" asChild>
         <TouchableOpacity style={styles.floatingButton}>
           <Ionicons name="add" size={24} color="#fff" />

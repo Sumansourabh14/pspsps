@@ -53,3 +53,4 @@ Currently I can only set reminders that will be activated only once during the d
 If frequency is "daily", start_date and end_date must exist and they both should be of type timestamptz.
 Use the user_id and attach it to every reminder object that you create inside the JSON.
 Use the id and attach it every reminder object that you create inside the JSON as pet_id.
+For a 'fish' pet, do not include reminder of these types: nail_cutting, litter_cleaning, vaccination, playtime

@@ -1,8 +1,11 @@
-import Colors from "@/constants/Colors";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/AuthProvider";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
+import { decode } from "base64-arraybuffer";
+import { randomUUID } from "expo-crypto";
+import * as FileSystem from "expo-file-system";
+import * as ImagePicker from "expo-image-picker";
 import { router, Stack } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -14,10 +17,6 @@ import {
   View,
 } from "react-native";
 import { Button, Card, Text, TextInput } from "react-native-paper";
-import * as ImagePicker from "expo-image-picker";
-import * as FileSystem from "expo-file-system";
-import { decode } from "base64-arraybuffer";
-import { randomUUID } from "expo-crypto";
 
 const pets = [
   { id: "1", name: "Cat", type: "cat", icon: "cat" },
