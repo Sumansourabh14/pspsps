@@ -98,6 +98,7 @@ async function scheduleRecurringNotifications(userId: string) {
             body: reminder.notes,
             time: triggerDate.toISOString(),
             user_id: userId,
+            pet_id: reminder.pet_id,
           };
 
           const { error, status } = await supabase
