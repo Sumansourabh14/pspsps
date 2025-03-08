@@ -2,7 +2,7 @@ import { View } from "@/components/Themed";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/AuthProvider";
 import { Ionicons } from "@expo/vector-icons";
-import { Link } from "expo-router";
+import { Link, Redirect } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   FlatList,
@@ -36,7 +36,7 @@ const PetCard = ({ pet, index }: { pet: Pet; index: number }) => {
             <Card.Content style={styles.cardContent}>
               <View style={styles.cardText}>
                 <Text variant="titleMedium" style={styles.petName}>
-                  {pet.name}
+                  {pet.name || `No name yet`}
                 </Text>
                 <Text variant="bodyMedium" style={styles.petSpecies}>
                   {pet.species}
@@ -91,6 +91,10 @@ export default function HomeScreen() {
         <Text style={styles.loadingText}>Fetching your pets...</Text>
       </View>
     );
+  }
+
+  if (!session) {
+    return <Redirect href={"/"} />;
   }
 
   return (

@@ -1,8 +1,11 @@
-import Colors from "@/constants/Colors";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/AuthProvider";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
+import { decode } from "base64-arraybuffer";
+import { randomUUID } from "expo-crypto";
+import * as FileSystem from "expo-file-system";
+import * as ImagePicker from "expo-image-picker";
 import { router, Stack } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -14,10 +17,6 @@ import {
   View,
 } from "react-native";
 import { Button, Card, Text, TextInput } from "react-native-paper";
-import * as ImagePicker from "expo-image-picker";
-import * as FileSystem from "expo-file-system";
-import { decode } from "base64-arraybuffer";
-import { randomUUID } from "expo-crypto";
 
 const pets = [
   { id: "1", name: "Cat", type: "cat", icon: "cat" },
@@ -120,15 +119,42 @@ export default function AddPetScreen() {
   const [selectedGender, setSelectedGender] = useState<string | null>(null);
   const [selectedChoice, setSelectedChoice] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState(null);
   const [mode, setMode] = useState("date");
   const [show, setShow] = useState(false);
 
   const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate;
+    const currentDate = selectedDate || null;
     setShow(false);
     setDate(currentDate);
-    console.log(currentDate.toLocaleDateString());
+
+    if (currentDate) {
+      const today = new Date();
+      const birthDate = new Date(currentDate);
+
+      // Calculate the difference in months
+      let years = today.getFullYear() - birthDate.getFullYear();
+      let months = today.getMonth() - birthDate.getMonth();
+      let days = today.getDate() - birthDate.getDate();
+
+      // Convert years to months and add to the month difference
+      let totalMonths = years * 12 + months;
+
+      // Adjust if the day of the month hasn't been reached yet
+      if (days < 0) {
+        totalMonths--;
+      }
+
+      // Ensure totalMonths is not negative (e.g., future date selected)
+      const calculatedAgeInMonths = Math.max(0, totalMonths);
+      setAge(calculatedAgeInMonths);
+
+      console.log({ calculatedAgeInMonths });
+    }
+
+    console.log(
+      currentDate ? currentDate.toLocaleDateString() : "No date selected"
+    );
   };
 
   const showMode = (currentMode) => {
@@ -137,7 +163,8 @@ export default function AddPetScreen() {
   };
 
   const showDatepicker = () => {
-    showMode("date");
+    setShow(true);
+    setMode("date");
   };
 
   const handleSubmit = async () => {
@@ -146,8 +173,8 @@ export default function AddPetScreen() {
       name,
       user_id: session?.user.id,
       species,
-      birth_date: date,
-      age,
+      birth_date: date, // Will be null if not set
+      age: age > 0 ? age : null, // Only include age if it’s meaningful
       gender,
       avatar,
     };
@@ -397,7 +424,15 @@ export default function AddPetScreen() {
                 renderItem={({ item }) => (
                   <YesOrNoCard
                     item={item}
-                    handlePress={() => setSelectedChoice(item.type)}
+                    handlePress={() => {
+                      setSelectedChoice(item.type);
+                      if (item.type === "no") {
+                        setDate(null); // Reset date
+                        setAge(0); // Reset age to 0 instead of null
+                      } else if (item.type === "yes") {
+                        setAge(0); // Reset to 0 to avoid null issues
+                      }
+                    }}
                     isSelected={selectedChoice === item.type}
                   />
                 )}
@@ -408,8 +443,8 @@ export default function AddPetScreen() {
               <>
                 <Text style={styles.subHeader}>Great! Add the age</Text>
                 <TextInput
-                  label="Age"
-                  value={age.toString()}
+                  label="Age (in months)"
+                  value={age !== null ? age.toString() : ""} // Fallback to empty string if null
                   onChangeText={(text) => setAge(parseInt(text) || 0)}
                   mode="outlined"
                   style={styles.input}
@@ -431,9 +466,10 @@ export default function AddPetScreen() {
                 {show && (
                   <RNDateTimePicker
                     testID="dateTimePicker"
-                    value={date}
+                    value={date || new Date()} // Fallback to today only for display, not submission
                     mode={mode}
                     onChange={onChange}
+                    maximumDate={new Date()} // Prevent future dates
                   />
                 )}
                 <Button
