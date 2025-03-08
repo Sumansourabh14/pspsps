@@ -26,6 +26,7 @@ const reminder = {
   end_date: "2025-03-12 15:49:00+00",
   time: "HH:MM:00", // Still store time separately if needed
   last_completed: null,
+  title: "",
   notes: "",
   is_active: true,
 };

@@ -8,10 +8,10 @@ import { ActivityIndicator, FlatList, StyleSheet } from "react-native";
 // Sample notification data type
 interface Notification {
   id: string;
+  pet_id: string;
   title: string;
-  message: string;
+  body: string;
   time: string;
-  read: boolean;
 }
 
 export default function NotificationsScreen() {
@@ -44,6 +44,23 @@ export default function NotificationsScreen() {
       mounted = false;
     };
   }, [session]);
+
+  const findPetById = async (petId: string) => {
+    if (!petId) return;
+
+    const { data, error } = await supabase
+      .from("pets")
+      .select("*")
+      .eq("id", petId)
+      .single();
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    return data.name;
+  };
 
   if (loading) {
     return (
@@ -97,9 +114,18 @@ export default function NotificationsScreen() {
 
   // Render individual notification item
   const renderNotification = ({ item }: { item: Notification }) => (
-    <View style={[styles.notificationItem, !item.read && styles.unread]}>
-      <Text style={styles.notificationTitle}>{item.title}</Text>
-      <Text style={styles.notificationMessage}>{item.message}</Text>
+    <View style={[styles.notificationItem, styles.unread]}>
+      {!!item.title && (
+        <Text style={styles.notificationTitle}>{item.title}</Text>
+      )}
+      {!!item.body && (
+        <Text style={styles.notificationMessage}>{item.body}</Text>
+      )}
+      {!!item.pet_id && (
+        <Text style={styles.notificationMessage}>
+          {findPetById(item.pet_id)}
+        </Text>
+      )}
       <Text style={styles.notificationTime}>{getRelativeTime(item.time)}</Text>
     </View>
   );
@@ -149,9 +175,11 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   unread: {
-    backgroundColor: "#E8F5E9",
+    // backgroundColor: "#E8F5E9",
     borderLeftWidth: 4,
     borderLeftColor: "#4CAF50",
+    borderRightWidth: 1,
+    borderRightColor: "#4CAF50",
   },
   notificationTitle: {
     fontSize: 16,

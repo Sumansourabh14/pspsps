@@ -56,13 +56,6 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
         }}
       />
-      <Tabs.Screen
-        name="ai"
-        options={{
-          title: "Ask AI",
-          tabBarIcon: ({ color }) => <TabBarIcon name="search" color={color} />,
-        }}
-      />
     </Tabs>
   );
 }
