@@ -18,8 +18,6 @@ const WelcomeScreen = () => {
   const [isFirstLaunch, setIsFirstLaunch] = useState(null);
   const { session, loading } = useAuth();
 
-  console.log({ isFirstLaunch, loading, session });
-
   // Check AsyncStorage for onboarding status
   useEffect(() => {
     const checkFirstLaunch = async () => {

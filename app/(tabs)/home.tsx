@@ -137,6 +137,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F5F6F5",
   },
   loadingText: {
+    fontFamily: "NotoSans-Regular",
     marginTop: 10,
     fontSize: 16,
     color: "#666",
@@ -146,13 +147,14 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 16,
-    fontWeight: "bold",
+    fontFamily: "NotoSans-Bold",
   },
   headerSubtitle: {
     fontSize: 16,
     color: "#666",
     marginTop: 5,
     fontStyle: "italic",
+    fontFamily: "NotoSans-Regular",
   },
   listContent: {
     paddingBottom: 80, // Space for floating button
@@ -184,11 +186,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   petName: {
-    fontWeight: "bold",
+    fontFamily: "NotoSans-Bold",
     color: "#333",
   },
   petSpecies: {
     color: "#666",
+    fontFamily: "NotoSans-Regular",
   },
   emptyText: {
     textAlign: "center",
@@ -215,7 +218,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#fff",
     fontSize: 16,
-    fontWeight: "700",
+    fontFamily: "NotoSans-Bold",
     marginLeft: 6,
   },
 });
