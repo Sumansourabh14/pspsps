@@ -34,9 +34,11 @@ interface Reminder {
 
 const ReminderCard = ({
   reminder,
+  petName,
   index,
 }: {
   reminder: Reminder;
+  petName: string;
   index: number;
 }) => {
   return (
@@ -58,15 +60,20 @@ const ReminderCard = ({
                 style={styles.cardIcon}
               />
               <View style={styles.cardTextContainer}>
-                <Text variant="titleMedium" style={styles.cardTitle}>
-                  {reminder.title}
-                </Text>
+                {!!reminder.title && (
+                  <Text variant="titleMedium" style={styles.cardTitle}>
+                    {reminder.title}
+                  </Text>
+                )}
                 <Text
                   variant="bodyMedium"
                   style={styles.cardNotes}
                   numberOfLines={2}
                 >
                   {reminder.notes || "No notes"}
+                </Text>
+                <Text variant="bodyMedium" style={styles.cardNotes}>
+                  {petName || ""}
                 </Text>
                 <Text variant="bodySmall" style={styles.cardFrequency}>
                   {reminder.frequency}
@@ -114,6 +121,23 @@ export default function RemindersScreen() {
     };
   }, [session]);
 
+  const findPetNameById = async (petId: string) => {
+    if (!petId) return;
+
+    const { data, error } = await supabase
+      .from("pets")
+      .select("*")
+      .eq("id", petId)
+      .single();
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    return data.name || `Species: ${data.species}`;
+  };
+
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -133,7 +157,11 @@ export default function RemindersScreen() {
         data={reminders}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item, index }) => (
-          <ReminderCard reminder={item} index={index} />
+          <ReminderCard
+            reminder={item}
+            index={index}
+            petName={findPetNameById(item.pet_id)}
+          />
         )}
         numColumns={1}
         ListEmptyComponent={
@@ -221,7 +249,6 @@ const styles = StyleSheet.create({
   cardFrequency: {
     color: "#4CAF50",
     marginTop: 4,
-    fontStyle: "italic",
   },
   emptyText: {
     textAlign: "center",
