@@ -191,10 +191,10 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 36,
-    fontWeight: "bold",
     color: "#fff",
     textAlign: "center",
     marginBottom: 16,
+    fontFamily: "PlayfairDisplay-Bold",
   },
   subtitle: {
     fontSize: 18,
@@ -202,6 +202,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     lineHeight: 24,
     paddingHorizontal: 20,
+    fontFamily: "NotoSans-Regular",
   },
   buttonContainer: {
     flexDirection: "row",
