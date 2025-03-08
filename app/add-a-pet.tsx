@@ -239,7 +239,14 @@ export default function AddPetScreen() {
 
   return (
     <>
-      <Stack.Screen options={{ title: `Add a Pet` }} />
+      <Stack.Screen
+        options={{
+          title: `Add a Pet`,
+          headerTitleStyle: {
+            fontFamily: "NotoSans-Black",
+          },
+        }}
+      />
       <View style={styles.container}>
         {current === 0 && (
           <>
@@ -508,7 +515,7 @@ export default function AddPetScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F5F6F5", // Light pet-friendly background
+    backgroundColor: "#FFF", // Light pet-friendly background
     paddingHorizontal: 20,
     paddingTop: 20,
   },
@@ -517,8 +524,8 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   headerTitle: {
+    fontFamily: "NotoSans-Black",
     fontSize: 28,
-    fontWeight: "bold",
     color: "#333",
     textAlign: "center",
   },
@@ -526,7 +533,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#666",
     marginTop: 8,
-    fontStyle: "italic",
+    fontFamily: "NotoSans-Regular",
     textAlign: "center",
   },
   listContainer: {
@@ -558,12 +565,12 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   cardText: {
-    fontWeight: "600",
+    fontFamily: "NotoSans-Bold",
     color: "#333",
+    marginTop: 4,
   },
   selectedText: {
     color: "#4CAF50",
-    fontWeight: "bold",
   },
   input: {
     marginBottom: 20,
@@ -610,8 +617,8 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   skipButtonLabel: {
+    fontFamily: "NotoSans-Bold",
     fontSize: 16,
-    fontWeight: "600",
     color: "#4CAF50",
   },
   dateButton: {
@@ -628,8 +635,8 @@ const styles = StyleSheet.create({
     color: "#4CAF50",
   },
   subHeader: {
-    fontSize: 20,
-    fontWeight: "600",
+    fontFamily: "NotoSans-Bold",
+    fontSize: 18,
     color: "#333",
     marginBottom: 16,
     textAlign: "center",
@@ -647,7 +654,7 @@ const styles = StyleSheet.create({
   },
   buttonLabel: {
     fontSize: 18,
-    fontWeight: "600",
+    fontFamily: "NotoSans-Bold",
     color: "#fff",
   },
   buttonDisabled: {
