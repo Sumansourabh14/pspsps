@@ -1,7 +1,9 @@
 import { useAuth } from "@/providers/AuthProvider";
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
-import { Link, Redirect, Stack } from "expo-router";
+import { Link, Redirect, router, Stack } from "expo-router";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   ImageBackground,
@@ -13,18 +15,43 @@ import {
 import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
 
 const WelcomeScreen = () => {
+  const [isFirstLaunch, setIsFirstLaunch] = useState(null);
   const { session, loading } = useAuth();
 
-  if (loading) {
+  console.log({ isFirstLaunch, loading, session });
+
+  // Check AsyncStorage for onboarding status
+  useEffect(() => {
+    const checkFirstLaunch = async () => {
+      try {
+        const value = await AsyncStorage.getItem("hasCompletedOnboarding");
+        setIsFirstLaunch(value === null || value === "false");
+      } catch (error) {
+        console.error("Error checking onboarding status:", error);
+        setIsFirstLaunch(true); // Default to onboarding on error
+      }
+    };
+    checkFirstLaunch();
+  }, []);
+
+  // Handle navigation with a guard to prevent redundant calls
+  useEffect(() => {
+    if (isFirstLaunch === null || loading) return; // Wait until both are resolved
+
+    if (isFirstLaunch === true) {
+      router.replace("/onboarding"); // Use replace to avoid stacking
+    } else if (isFirstLaunch === false && session) {
+      router.replace("/(tabs)/home"); // Use replace for home too
+    }
+  }, [isFirstLaunch, loading, session]);
+
+  // Show loading state while checking AsyncStorage or session
+  if (isFirstLaunch === null || loading) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#4CAF50" />
       </View>
     );
-  }
-
-  if (!!session) {
-    return <Redirect href={"/(tabs)/home"} />;
   }
 
   return (
