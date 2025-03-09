@@ -159,7 +159,9 @@ const AddReminderScreen = () => {
     const reminder = {
       pet_id: petId,
       type,
-      title: title || `${type.replace("_", " ")}`,
+      title:
+        title ||
+        `${type.charAt(0).toUpperCase() + type.slice(1).replace("_", " ")}`,
       frequency,
       interval: frequency === Frequency.Custom ? interval : null,
       start_date: combinedDateTime.toISOString(), // Store full datetime
@@ -367,6 +369,7 @@ const AddReminderScreen = () => {
                     setEndDate(date);
                   }
                 }}
+                minimumDate={startDate}
               />
             )}
           </>

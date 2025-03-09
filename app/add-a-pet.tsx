@@ -263,7 +263,9 @@ export default function AddPetScreen() {
                   <PetCard
                     pet={item}
                     handlePress={() => {
-                      setSpecies(item.type);
+                      setSpecies(
+                        item.type.charAt(0).toUpperCase() + item.type.slice(1)
+                      );
                       setSelectedPet(item.type);
                     }}
                     isSelected={selectedPet === item.type}
@@ -644,7 +646,7 @@ const styles = StyleSheet.create({
   submitButton: {
     marginVertical: 20,
     paddingVertical: 10,
-    borderRadius: 50,
+    borderRadius: 8,
     backgroundColor: "#4CAF50",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },

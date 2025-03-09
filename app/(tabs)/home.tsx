@@ -1,3 +1,4 @@
+import RemoteImage from "@/components/images/RemoteImage";
 import { View } from "@/components/Themed";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/AuthProvider";
@@ -18,10 +19,26 @@ interface Pet {
   user_id: string;
   name: string;
   species: string;
-  avatar?: string; // Optional avatar field
+  avatar?: string; // Path to image in Supabase storage
 }
 
 const PetCard = ({ pet, index }: { pet: Pet; index: number }) => {
+  // Function to determine fallback icon based on species
+  const getSpeciesIcon = (species: string) => {
+    switch (species.toLowerCase()) {
+      case "dog":
+        return "paw";
+      case "cat":
+        return "paw";
+      case "bird":
+        return "feather";
+      case "fish":
+        return "fish";
+      default:
+        return "paw"; // Default fallback
+    }
+  };
+
   return (
     <Link
       href={{
@@ -34,9 +51,25 @@ const PetCard = ({ pet, index }: { pet: Pet; index: number }) => {
         <Animated.View entering={FadeInDown.delay(index * 100).duration(400)}>
           <Card style={styles.card}>
             <Card.Content style={styles.cardContent}>
+              {pet.avatar ? (
+                <RemoteImage
+                  path={pet.avatar}
+                  fallbackIcon={getSpeciesIcon(pet.species)}
+                  style={styles.avatar}
+                  resizeMode="cover"
+                />
+              ) : (
+                <View style={styles.iconContainer}>
+                  <Ionicons
+                    name={getSpeciesIcon(pet.species)}
+                    size={30}
+                    color="#4CAF50"
+                  />
+                </View>
+              )}
               <View style={styles.cardText}>
                 <Text variant="titleMedium" style={styles.petName}>
-                  {pet.name || `No name yet`}
+                  {pet.name || "-"}
                 </Text>
                 <Text variant="bodyMedium" style={styles.petSpecies}>
                   {pet.species}
@@ -109,7 +142,12 @@ export default function HomeScreen() {
         renderItem={({ item, index }) => <PetCard pet={item} index={index} />}
         numColumns={2}
         ListEmptyComponent={
-          <Text style={styles.emptyText}>No pets yet. Add one now!</Text>
+          <View style={styles.emptyContainer}>
+            <Ionicons name="paw-outline" size={40} color="#666" />
+            <Text style={styles.emptyText}>
+              Your lap’s looking lonely. Add a pet already!
+            </Text>
+          </View>
         }
         contentContainerStyle={styles.listContent}
       />
@@ -129,6 +167,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     paddingTop: 30,
+    backgroundColor: "#FFF",
   },
   loadingContainer: {
     flex: 1,
@@ -148,13 +187,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 16,
     fontFamily: "NotoSans-Bold",
-  },
-  headerSubtitle: {
-    fontSize: 16,
-    color: "#666",
-    marginTop: 5,
-    fontStyle: "italic",
-    fontFamily: "NotoSans-Regular",
+    color: "#333",
   },
   listContent: {
     paddingBottom: 80, // Space for floating button
@@ -179,8 +212,16 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    marginRight: 10,
-    backgroundColor: "#e0e0e0", // Fallback color
+    marginRight: 12,
+  },
+  iconContainer: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: "#E8F5E9",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 12,
   },
   cardText: {
     flex: 1,
@@ -193,10 +234,15 @@ const styles = StyleSheet.create({
     color: "#666",
     fontFamily: "NotoSans-Regular",
   },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   emptyText: {
     fontFamily: "NotoSans-Regular",
     textAlign: "center",
-    marginTop: 20,
+    marginTop: 10, // Space between icon and text
     fontSize: 16,
     color: "#666",
   },
