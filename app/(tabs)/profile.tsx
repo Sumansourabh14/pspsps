@@ -8,8 +8,9 @@ import { View } from "@/components/Themed";
 import { supabase } from "@/lib/supabase";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "@/providers/AuthProvider";
-import { Redirect } from "expo-router";
+import { Link, Redirect } from "expo-router";
 import { useEffect, useState } from "react";
+import { Button } from "react-native-paper";
 
 interface User {
   full_name: string;
@@ -69,13 +70,23 @@ export default function ProfileScreen() {
             <Text style={styles.fullName}>{user.full_name}</Text>
           </View>
         )}
-        <TouchableOpacity
-          style={[styles.btn, styles.logoutBtn]}
-          onPress={() => supabase.auth.signOut()}
-        >
-          <Ionicons name="log-out" size={22} color="#fff" />
-          <Text style={styles.btnText}>Logout</Text>
-        </TouchableOpacity>
+
+        <View style={{ width: "100%" }}>
+          <Link href={"/update-user"} asChild>
+            <TouchableOpacity style={styles.secondaryButton}>
+              <Ionicons name="pencil-outline" size={20} color="#fff" />
+              <Text style={styles.secondaryButtonText}>Update Profile</Text>
+            </TouchableOpacity>
+          </Link>
+          <Button
+            mode="outlined"
+            style={[styles.btn, styles.logoutBtn]}
+            onPress={() => supabase.auth.signOut()}
+            icon="arrow-right"
+          >
+            <Text style={styles.btnText}>Logout</Text>
+          </Button>
+        </View>
       </View>
     </View>
   );
@@ -110,6 +121,7 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
   },
   fullName: {
+    fontFamily: "NotoSans-Bold",
     fontSize: 32,
     fontWeight: "bold",
     color: "#333",
@@ -120,27 +132,33 @@ const styles = StyleSheet.create({
     textShadowRadius: 3,
   },
   btn: {
-    borderWidth: 0,
+    borderWidth: 2,
+    borderColor: "#D32F2F",
+    borderRadius: 8,
+    paddingVertical: 6,
+    paddingHorizontal: 24,
+  },
+  logoutBtn: {
+    backgroundColor: "#FFF", // Softer red for logout
+  },
+  btnText: {
+    color: "#000",
+    fontSize: 14,
+    fontFamily: "NotoSans-Bold",
+  },
+  secondaryButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontFamily: "NotoSans-SemiBold",
+  },
+  secondaryButton: {
+    backgroundColor: "#4CAF50",
     borderRadius: 8,
     paddingVertical: 12,
-    paddingHorizontal: 24,
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    gap: 10,
-    width: "90%",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 5,
-  },
-  logoutBtn: {
-    backgroundColor: "#D32F2F", // Softer red for logout
-  },
-  btnText: {
-    color: "#fff",
-    fontSize: 14,
-    fontWeight: "600",
+    gap: 8,
+    marginBottom: 20,
   },
 });
