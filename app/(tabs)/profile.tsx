@@ -153,15 +153,9 @@ const styles = StyleSheet.create({
   },
   fullName: {
     fontFamily: "NotoSans-Bold",
-    fontSize: 32,
-    fontWeight: "bold",
-    color: "#333",
-    marginTop: 16,
-    marginBottom: 20,
+    fontSize: 24,
+    marginTop: 4,
     textAlign: "center",
-    textShadowColor: "rgba(0, 0, 0, 0.1)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
   },
   buttonGrid: {
     flexDirection: "row",

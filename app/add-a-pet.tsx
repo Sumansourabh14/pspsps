@@ -263,7 +263,9 @@ export default function AddPetScreen() {
                   <PetCard
                     pet={item}
                     handlePress={() => {
-                      setSpecies(item.type);
+                      setSpecies(
+                        item.type.charAt(0).toUpperCase() + item.type.slice(1)
+                      );
                       setSelectedPet(item.type);
                     }}
                     isSelected={selectedPet === item.type}
