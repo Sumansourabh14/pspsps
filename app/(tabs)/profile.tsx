@@ -109,6 +109,12 @@ export default function ProfileScreen() {
               <Text style={styles.secondaryButtonText}>Update Profile</Text>
             </TouchableOpacity>
           </Link>
+          <Link href={"/feedback"} asChild>
+            <TouchableOpacity style={styles.secondaryButton}>
+              <Ionicons name="send-outline" size={20} color="#fff" />
+              <Text style={styles.secondaryButtonText}>Send Feedback</Text>
+            </TouchableOpacity>
+          </Link>
           <Button
             mode="outlined"
             style={[styles.btn, styles.logoutBtn]}
