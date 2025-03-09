@@ -71,6 +71,37 @@ export default function ProfileScreen() {
           </View>
         )}
 
+        <View style={styles.buttonGrid}>
+          <Link href="/add-a-pet" asChild>
+            <TouchableOpacity style={styles.gridButton}>
+              <Ionicons name="paw-outline" size={24} color="#4CAF50" />
+              <Text style={styles.gridButtonText}>Add Pet</Text>
+            </TouchableOpacity>
+          </Link>
+          <Link href="/add-reminder" asChild>
+            <TouchableOpacity style={styles.gridButton}>
+              <Ionicons name="alarm-outline" size={24} color="#4CAF50" />
+              <Text style={styles.gridButtonText}>Add Reminder</Text>
+            </TouchableOpacity>
+          </Link>
+          <Link href="/notifications" asChild>
+            <TouchableOpacity style={styles.gridButton}>
+              <Ionicons
+                name="notifications-outline"
+                size={24}
+                color="#4CAF50"
+              />
+              <Text style={styles.gridButtonText}>Notifications</Text>
+            </TouchableOpacity>
+          </Link>
+          <Link href="/home" asChild>
+            <TouchableOpacity style={styles.gridButton}>
+              <Ionicons name="home-outline" size={24} color="#4CAF50" />
+              <Text style={styles.gridButtonText}>Home</Text>
+            </TouchableOpacity>
+          </Link>
+        </View>
+
         <View style={{ width: "100%" }}>
           <Link href={"/update-user"} asChild>
             <TouchableOpacity style={styles.secondaryButton}>
@@ -95,7 +126,7 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F5F6F5", // Light pet-friendly background
+    backgroundColor: "#F5F6F5",
   },
   wrapper: {
     flex: 1,
@@ -126,10 +157,38 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#333",
     marginTop: 16,
+    marginBottom: 20,
     textAlign: "center",
     textShadowColor: "rgba(0, 0, 0, 0.1)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,
+  },
+  buttonGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    width: "100%",
+    marginBottom: 20,
+  },
+  gridButton: {
+    width: "48%",
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    padding: 15,
+    marginBottom: 10,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  gridButtonText: {
+    color: "#333",
+    fontSize: 14,
+    fontFamily: "NotoSans-SemiBold",
+    marginTop: 8,
+    textAlign: "center",
   },
   btn: {
     borderWidth: 2,
@@ -139,7 +198,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
   },
   logoutBtn: {
-    backgroundColor: "#FFF", // Softer red for logout
+    backgroundColor: "#FFF",
   },
   btnText: {
     color: "#000",
