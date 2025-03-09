@@ -148,7 +148,12 @@ const PetScreen = () => {
   return (
     <>
       <Stack.Screen
-        options={{ headerTitle: petData.name ? petData.name : "NA" }}
+        options={{
+          headerTitle: petData.name ? petData.name : "No Name Set",
+          headerTitleStyle: {
+            fontFamily: "NotoSans-Black",
+          },
+        }}
       />
       <ScrollView style={styles.container}>
         <View style={styles.imageContainer}>
@@ -246,15 +251,15 @@ const PetScreen = () => {
             labelStyle={styles.editButtonLabel}
             icon="pencil"
           >
-            Edit Profile
+            Edit Pet
           </Button>
         </Link>
 
         <Button
           onPress={handleRemovePet}
-          mode="contained"
+          mode="outlined"
           style={styles.deleteButton}
-          labelStyle={styles.editButtonLabel}
+          labelStyle={styles.deleteButtonLabel}
           icon="delete"
         >
           Remove
@@ -280,7 +285,7 @@ const styles = StyleSheet.create({
   loadingText: {
     fontSize: 18,
     color: "#666",
-    fontStyle: "italic",
+    fontFamily: "NotoSans-Regular",
   },
   imageContainer: {
     position: "relative",
@@ -312,26 +317,6 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 5,
   },
-  nameOverlay: {
-    position: "absolute",
-    bottom: 20,
-    left: 20,
-    backgroundColor: "rgba(76, 175, 80, 0.9)",
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-  },
-  petName: {
-    color: "#fff",
-    fontWeight: "bold",
-    textShadowColor: "rgba(0, 0, 0, 0.3)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
-  },
   infoCard: {
     paddingHorizontal: 16,
     paddingVertical: 10,
@@ -356,40 +341,40 @@ const styles = StyleSheet.create({
   },
   infoLabel: {
     fontSize: 12,
+    fontFamily: "NotoSans-Bold",
     color: "#666",
     marginTop: 8,
-    fontWeight: "700",
     textAlign: "center",
   },
   infoValue: {
     fontSize: 14,
     color: "#333",
     marginTop: 4,
-    fontWeight: "600",
+    fontFamily: "NotoSans-Bold",
     textAlign: "center",
   },
   editButton: {
     marginHorizontal: 16,
-    marginTop: 20,
     borderRadius: 8,
     backgroundColor: "#4CAF50",
     paddingVertical: 8,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 5,
   },
   editButtonLabel: {
     fontSize: 16,
-    fontWeight: "600",
     color: "#fff",
+    fontFamily: "NotoSans-Bold",
+  },
+  deleteButtonLabel: {
+    fontSize: 16,
+    color: "#000",
+    fontFamily: "NotoSans-Bold",
   },
   deleteButton: {
     marginHorizontal: 16,
     marginVertical: 12,
     borderRadius: 8,
-    backgroundColor: "#D32F2F",
+    borderWidth: 2,
+    borderColor: "#D32F2F",
     paddingVertical: 8,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },

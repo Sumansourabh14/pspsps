@@ -202,6 +202,7 @@ const styles = StyleSheet.create({
     color: "#666",
     fontSize: 16,
     marginTop: 20,
+    fontFamily: "NotoSans-Regular",
   },
   // Keeping your original styles
   profileHeader: {

@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#666",
     marginTop: 10,
-    fontStyle: "italic",
+    fontFamily: "NotoSans-Regular",
   },
   header: {
     alignItems: "center",
@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     fontSize: 16,
     color: "#666",
-    fontStyle: "italic",
+    fontFamily: "NotoSans-Regular",
   },
   floatingButton: {
     position: "absolute",
@@ -276,8 +276,8 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "#fff",
+    fontFamily: "NotoSans-Bold",
     fontSize: 16,
-    fontWeight: "700",
     marginLeft: 6,
   },
 });
