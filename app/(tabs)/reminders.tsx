@@ -65,13 +65,15 @@ const ReminderCard = ({
                     {reminder.title}
                   </Text>
                 )}
-                <Text
-                  variant="bodyMedium"
-                  style={styles.cardNotes}
-                  numberOfLines={2}
-                >
-                  {reminder.notes || "No notes"}
-                </Text>
+                {!!reminder.notes && (
+                  <Text
+                    variant="bodyMedium"
+                    style={styles.cardNotes}
+                    numberOfLines={2}
+                  >
+                    {reminder.notes}
+                  </Text>
+                )}
                 <Text variant="bodyMedium" style={styles.cardNotes}>
                   {petName || ""}
                 </Text>
@@ -239,16 +241,18 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   cardTitle: {
-    fontWeight: "bold",
+    fontFamily: "NotoSans-Bold",
     color: "#333",
   },
   cardNotes: {
     color: "#666",
     marginTop: 4,
+    fontFamily: "NotoSans-Regular",
   },
   cardFrequency: {
     color: "#4CAF50",
     marginTop: 4,
+    fontFamily: "NotoSans-SemiBold",
   },
   emptyText: {
     textAlign: "center",
