@@ -232,7 +232,14 @@ const AddReminderScreen = () => {
 
   return (
     <>
-      <Stack.Screen options={{ title: "Add Reminder" }} />
+      <Stack.Screen
+        options={{
+          title: "Add Reminder",
+          headerTitleStyle: {
+            fontFamily: "NotoSans-Black",
+          },
+        }}
+      />
       <ScrollView style={styles.container}>
         <Text style={styles.label}>For which pet?</Text>
         {pets && (
@@ -242,7 +249,11 @@ const AddReminderScreen = () => {
             style={styles.picker}
           >
             {pets.map((pet) => (
-              <Picker.Item key={pet.id} label={pet.name} value={pet.id} />
+              <Picker.Item
+                key={pet.id}
+                label={pet.name ? pet.name : `${pet.species} (No name set)`}
+                value={pet.id}
+              />
             ))}
           </Picker>
         )}
@@ -427,7 +438,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    fontWeight: "700",
+    fontFamily: "NotoSans-Bold",
     color: "#333",
     marginTop: 8,
     marginBottom: 4,
