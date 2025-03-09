@@ -369,6 +369,7 @@ const AddReminderScreen = () => {
                     setEndDate(date);
                   }
                 }}
+                minimumDate={startDate}
               />
             )}
           </>
