@@ -142,7 +142,12 @@ export default function HomeScreen() {
         renderItem={({ item, index }) => <PetCard pet={item} index={index} />}
         numColumns={2}
         ListEmptyComponent={
-          <Text style={styles.emptyText}>No pets yet. Add one now!</Text>
+          <View style={styles.emptyContainer}>
+            <Ionicons name="paw-outline" size={40} color="#666" />
+            <Text style={styles.emptyText}>
+              Your lap’s looking lonely. Add a pet already!
+            </Text>
+          </View>
         }
         contentContainerStyle={styles.listContent}
       />
@@ -229,10 +234,15 @@ const styles = StyleSheet.create({
     color: "#666",
     fontFamily: "NotoSans-Regular",
   },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   emptyText: {
     fontFamily: "NotoSans-Regular",
     textAlign: "center",
-    marginTop: 20,
+    marginTop: 10, // Space between icon and text
     fontSize: 16,
     color: "#666",
   },
