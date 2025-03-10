@@ -355,7 +355,7 @@ const EditReminderScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F5F6F5", // Light pet-friendly background
+    backgroundColor: "#FFF", // Light pet-friendly background
   },
   scrollContent: {
     paddingVertical: 8,

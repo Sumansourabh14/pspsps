@@ -255,13 +255,13 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: "#F5F6F5",
+    backgroundColor: "#FFF",
   },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#F5F6F5",
+    backgroundColor: "#FFF",
   },
   loadingText: {
     fontSize: 18,

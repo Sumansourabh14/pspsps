@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#F5F6F5",
+    backgroundColor: "#FFF",
   },
   loadingText: {
     fontFamily: "NotoSans-Regular",
