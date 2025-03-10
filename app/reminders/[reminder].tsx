@@ -119,26 +119,22 @@ const ReminderScreen = () => {
   return (
     <>
       <Stack.Screen
-        options={{ title: reminder.title ? reminder.title : reminder.type }}
+        options={{
+          title: reminder.title
+            ? reminder.title
+            : reminder.type.charAt(0).toUpperCase() +
+              reminder.type.slice(1).replace("_", " "),
+          headerTitleStyle: {
+            fontFamily: "NotoSans-Black",
+          },
+        }}
       />
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.scrollContent}
       >
-        <Card style={styles.card}>
-          <Card.Content>
-            <View style={styles.header}>
-              <Ionicons
-                name={reminder.is_active ? "alarm" : "alarm-outline"}
-                size={32}
-                color={reminder.is_active ? "#4CAF50" : "#666"}
-                style={styles.headerIcon}
-              />
-              <Text style={styles.headerTitle}>
-                {reminder.title || reminder.type}
-              </Text>
-            </View>
-
+        <View style={styles.card}>
+          <View>
             <View style={styles.infoRow}>
               <Text style={styles.label}>For Pet</Text>
               <Text style={styles.value}>{pet ? pet.name : "Loading..."}</Text>
@@ -146,7 +142,10 @@ const ReminderScreen = () => {
 
             <View style={styles.infoRow}>
               <Text style={styles.label}>Type</Text>
-              <Text style={styles.value}>{reminder.type}</Text>
+              <Text style={styles.value}>
+                {reminder.type.charAt(0).toUpperCase() +
+                  reminder.type.slice(1).replace("_", " ")}
+              </Text>
             </View>
 
             <View style={styles.infoRow}>
@@ -162,13 +161,17 @@ const ReminderScreen = () => {
               <Text style={styles.label}>
                 {reminder.frequency === "once" ? "Date" : "Start Date"}
               </Text>
-              <Text style={styles.value}>{reminder.start_date}</Text>
+              <Text style={styles.value}>
+                {reminder.start_date.split("T")[0]}
+              </Text>
             </View>
 
             {reminder.frequency !== "once" && (
               <View style={styles.infoRow}>
                 <Text style={styles.label}>End Date</Text>
-                <Text style={styles.value}>{reminder.end_date}</Text>
+                <Text style={styles.value}>
+                  {reminder.end_date.split("T")[0]}
+                </Text>
               </View>
             )}
 
@@ -177,24 +180,30 @@ const ReminderScreen = () => {
               <Text style={styles.value}>{reminder.time}</Text>
             </View>
 
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Next Due</Text>
-              <Text style={styles.value}>{reminder.next_due}</Text>
-            </View>
+            {reminder.frequency !== "once" && (
+              <View style={styles.infoRow}>
+                <Text style={styles.label}>Next Due</Text>
+                <Text style={styles.value}>
+                  {reminder.next_due.split("T")[0]}
+                </Text>
+              </View>
+            )}
 
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Last Completed</Text>
-              <Text style={styles.value}>
-                {reminder.last_completed || "Not completed yet"}
-              </Text>
-            </View>
+            {reminder.frequency !== "once" && (
+              <View style={styles.infoRow}>
+                <Text style={styles.label}>Last Completed</Text>
+                <Text style={styles.value}>
+                  {reminder.last_completed || "Not completed yet"}
+                </Text>
+              </View>
+            )}
 
             <View style={styles.infoRow}>
               <Text style={styles.label}>Notes</Text>
               <Text style={styles.value}>{reminder.notes || "No notes"}</Text>
             </View>
-          </Card.Content>
-        </Card>
+          </View>
+        </View>
 
         <View style={styles.buttonContainer}>
           <Link
@@ -234,7 +243,7 @@ export default ReminderScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F5F6F5", // Light pet-friendly background
+    backgroundColor: "#FFF", // Light pet-friendly background
   },
   scrollContent: {
     paddingVertical: 20,
@@ -254,12 +263,6 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: 8,
     backgroundColor: "#fff",
-    elevation: 6,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    marginBottom: 20,
   },
   header: {
     flexDirection: "row",
@@ -287,15 +290,16 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    fontWeight: "700",
     color: "#333",
     flex: 1,
+    fontFamily: "NotoSans-Bold",
   },
   value: {
     fontSize: 14,
     color: "#666",
     flex: 2,
     textAlign: "right",
+    fontFamily: "NotoSans-Regular",
   },
   buttonContainer: {
     paddingHorizontal: 0,
@@ -324,7 +328,7 @@ const styles = StyleSheet.create({
   },
   buttonLabel: {
     fontSize: 16,
-    fontWeight: "600",
     color: "#fff",
+    fontFamily: "NotoSans-Bold",
   },
 });
