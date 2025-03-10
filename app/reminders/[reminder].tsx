@@ -165,16 +165,14 @@ const ReminderScreen = () => {
                   {reminder.frequency === "once" ? "Date" : "Start Date"}
                 </Text>
                 <Text style={styles.value}>
-                  {reminder.start_date.split("T")[0]}
+                  {reminder.start_date?.split("T")[0]}
                 </Text>
               </View>
 
               {reminder.frequency !== "once" && (
                 <View style={styles.infoRow}>
                   <Text style={styles.label}>End Date</Text>
-                  <Text style={styles.value}>
-                    {reminder.end_date.split("T")[0]}
-                  </Text>
+                  <Text style={styles.value}>{reminder.end_date}</Text>
                 </View>
               )}
 
@@ -186,9 +184,7 @@ const ReminderScreen = () => {
               {reminder.frequency !== "once" && (
                 <View style={styles.infoRow}>
                   <Text style={styles.label}>Next Due</Text>
-                  <Text style={styles.value}>
-                    {reminder.next_due.split("T")[0]}
-                  </Text>
+                  <Text style={styles.value}>{reminder.next_due}</Text>
                 </View>
               )}
 
