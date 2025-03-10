@@ -10,13 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import {
-  Button,
-  Card,
-  SegmentedButtons,
-  Text,
-  TextInput,
-} from "react-native-paper";
+import { Button, SegmentedButtons, Text, TextInput } from "react-native-paper";
 
 interface Pet {
   id: number;
