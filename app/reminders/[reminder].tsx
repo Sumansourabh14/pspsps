@@ -129,81 +129,86 @@ const ReminderScreen = () => {
           },
         }}
       />
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.scrollContent}
-      >
-        <View style={styles.card}>
-          <View>
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>For Pet</Text>
-              <Text style={styles.value}>{pet ? pet.name : "Loading..."}</Text>
-            </View>
-
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Type</Text>
-              <Text style={styles.value}>
-                {reminder.type.charAt(0).toUpperCase() +
-                  reminder.type.slice(1).replace("_", " ")}
-              </Text>
-            </View>
-
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Frequency</Text>
-              <Text style={styles.value}>
-                {reminder.frequency === "custom"
-                  ? `Every ${reminder.interval} days`
-                  : reminder.frequency}
-              </Text>
-            </View>
-
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>
-                {reminder.frequency === "once" ? "Date" : "Start Date"}
-              </Text>
-              <Text style={styles.value}>
-                {reminder.start_date.split("T")[0]}
-              </Text>
-            </View>
-
-            {reminder.frequency !== "once" && (
+      <View style={styles.container}>
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+        >
+          <View style={styles.card}>
+            <View>
               <View style={styles.infoRow}>
-                <Text style={styles.label}>End Date</Text>
+                <Text style={styles.label}>For Pet</Text>
                 <Text style={styles.value}>
-                  {reminder.end_date.split("T")[0]}
+                  {pet ? pet.name : "Loading..."}
                 </Text>
               </View>
-            )}
 
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Time</Text>
-              <Text style={styles.value}>{reminder.time}</Text>
-            </View>
-
-            {reminder.frequency !== "once" && (
               <View style={styles.infoRow}>
-                <Text style={styles.label}>Next Due</Text>
+                <Text style={styles.label}>Type</Text>
                 <Text style={styles.value}>
-                  {reminder.next_due.split("T")[0]}
+                  {reminder.type.charAt(0).toUpperCase() +
+                    reminder.type.slice(1).replace("_", " ")}
                 </Text>
               </View>
-            )}
 
-            {reminder.frequency !== "once" && (
               <View style={styles.infoRow}>
-                <Text style={styles.label}>Last Completed</Text>
+                <Text style={styles.label}>Frequency</Text>
                 <Text style={styles.value}>
-                  {reminder.last_completed || "Not completed yet"}
+                  {reminder.frequency === "custom"
+                    ? `Every ${reminder.interval} days`
+                    : reminder.frequency}
                 </Text>
               </View>
-            )}
 
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Notes</Text>
-              <Text style={styles.value}>{reminder.notes || "No notes"}</Text>
+              <View style={styles.infoRow}>
+                <Text style={styles.label}>
+                  {reminder.frequency === "once" ? "Date" : "Start Date"}
+                </Text>
+                <Text style={styles.value}>
+                  {reminder.start_date.split("T")[0]}
+                </Text>
+              </View>
+
+              {reminder.frequency !== "once" && (
+                <View style={styles.infoRow}>
+                  <Text style={styles.label}>End Date</Text>
+                  <Text style={styles.value}>
+                    {reminder.end_date.split("T")[0]}
+                  </Text>
+                </View>
+              )}
+
+              <View style={styles.infoRow}>
+                <Text style={styles.label}>Time</Text>
+                <Text style={styles.value}>{reminder.time}</Text>
+              </View>
+
+              {reminder.frequency !== "once" && (
+                <View style={styles.infoRow}>
+                  <Text style={styles.label}>Next Due</Text>
+                  <Text style={styles.value}>
+                    {reminder.next_due.split("T")[0]}
+                  </Text>
+                </View>
+              )}
+
+              {reminder.frequency !== "once" && (
+                <View style={styles.infoRow}>
+                  <Text style={styles.label}>Last Completed</Text>
+                  <Text style={styles.value}>
+                    {reminder.last_completed || "Not completed yet"}
+                  </Text>
+                </View>
+              )}
+
+              <View style={styles.infoRow}>
+                <Text style={styles.label}>Notes</Text>
+                <Text style={styles.value}>{reminder.notes || "No notes"}</Text>
+              </View>
             </View>
           </View>
-        </View>
+          <View style={styles.spacer} />
+        </ScrollView>
 
         <View style={styles.buttonContainer}>
           <Link
@@ -233,7 +238,7 @@ const ReminderScreen = () => {
             Remove
           </Button>
         </View>
-      </ScrollView>
+      </View>
     </>
   );
 };
@@ -243,7 +248,10 @@ export default ReminderScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFF", // Light pet-friendly background
+    backgroundColor: "#FFF",
+  },
+  scrollView: {
+    flex: 1,
   },
   scrollContent: {
     paddingVertical: 20,
@@ -263,21 +271,6 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: 8,
     backgroundColor: "#fff",
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 16,
-    paddingHorizontal: 12,
-    paddingTop: 12,
-  },
-  headerIcon: {
-    marginRight: 12,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#333",
   },
   infoRow: {
     flexDirection: "row",
@@ -302,33 +295,33 @@ const styles = StyleSheet.create({
     fontFamily: "NotoSans-Regular",
   },
   buttonContainer: {
-    paddingHorizontal: 0,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    backgroundColor: "#FFF",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 5,
   },
   editButton: {
-    marginVertical: 12,
+    marginVertical: 6,
     paddingVertical: 8,
     borderRadius: 8,
-    backgroundColor: "#4CAF50", // Pet-friendly green
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 5,
+    backgroundColor: "#4CAF50",
   },
   deleteButton: {
-    marginVertical: 12,
+    marginVertical: 6,
     paddingVertical: 8,
     borderRadius: 8,
-    backgroundColor: "#D32F2F", // Softer red
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 5,
+    backgroundColor: "#D32F2F",
   },
   buttonLabel: {
     fontSize: 16,
     color: "#fff",
     fontFamily: "NotoSans-Bold",
+  },
+  spacer: {
+    height: 100,
   },
 });
