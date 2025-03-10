@@ -159,6 +159,7 @@ const EditPetScreen = () => {
                     },
                     labelStyle: {
                       color: petData.species === "Dog" ? "#FFF" : "#000",
+                      fontFamily: "NotoSans-Regular",
                     },
                   },
                   {
@@ -170,6 +171,7 @@ const EditPetScreen = () => {
                     },
                     labelStyle: {
                       color: petData.species === "Cat" ? "#FFF" : "#000",
+                      fontFamily: "NotoSans-Regular",
                     },
                   },
                   {
@@ -181,6 +183,7 @@ const EditPetScreen = () => {
                     },
                     labelStyle: {
                       color: petData.species === "Fish" ? "#FFF" : "#000",
+                      fontFamily: "NotoSans-Regular",
                     },
                   },
                 ]}
@@ -208,6 +211,7 @@ const EditPetScreen = () => {
                     },
                     labelStyle: {
                       color: petData.gender === "male" ? "#FFF" : "#000",
+                      fontFamily: "NotoSans-Regular",
                     },
                   },
                   {
@@ -219,6 +223,7 @@ const EditPetScreen = () => {
                     },
                     labelStyle: {
                       color: petData.gender === "female" ? "#FFF" : "#000",
+                      fontFamily: "NotoSans-Regular",
                     },
                   },
                   {
@@ -230,6 +235,7 @@ const EditPetScreen = () => {
                     },
                     labelStyle: {
                       color: petData.gender === "unknown" ? "#FFF" : "#000",
+                      fontFamily: "NotoSans-Regular",
                     },
                   },
                 ]}
