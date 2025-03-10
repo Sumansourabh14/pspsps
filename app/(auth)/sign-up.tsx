@@ -86,7 +86,7 @@ export default function SignUpScreen() {
             disabled={!email || !password || loading}
             style={[
               styles.button,
-              (!email || password.length <= 6 || loading) &&
+              (!email || password.length < 6 || loading) &&
                 styles.buttonDisabled,
             ]}
             contentStyle={styles.buttonContent}

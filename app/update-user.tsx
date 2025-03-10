@@ -17,11 +17,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 interface User {
   id: string;
   full_name: string;
+  email: string;
 }
 
 export default function UpdateUserScreen() {
   const { session } = useAuth();
   const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [userData, setUserData] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -70,6 +72,7 @@ export default function UpdateUserScreen() {
   useEffect(() => {
     if (!!userData) {
       setName(userData.full_name);
+      setEmail(userData.email);
     }
   }, [userData]);
 
@@ -98,6 +101,31 @@ export default function UpdateUserScreen() {
           ) : (
             <View style={styles.content}>
               <View style={styles.topContent}>
+                <View style={styles.header}>
+                  <Text style={styles.subtitle}>Email</Text>
+                </View>
+
+                <View style={styles.inputContainer}>
+                  <TextInput
+                    placeholder="Email"
+                    value={email}
+                    mode="outlined"
+                    style={styles.input}
+                    theme={{
+                      roundness: 8,
+                      colors: {
+                        primary: "#000",
+                        background: "#fff",
+                      },
+                    }}
+                    outlineStyle={styles.inputOutline}
+                    left={<TextInput.Icon icon="email-outline" color="#666" />}
+                    autoCapitalize="words"
+                    returnKeyType="done"
+                    disabled
+                  />
+                </View>
+
                 <View style={styles.header}>
                   <Text style={styles.subtitle}>Name</Text>
                 </View>
@@ -187,11 +215,11 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontFamily: "NotoSans-Bold",
-    fontSize: 16,
-    marginBottom: 8,
+    fontSize: 14,
+    marginBottom: 4,
   },
   inputContainer: {
-    marginBottom: 24,
+    marginBottom: 16,
   },
   input: {
     backgroundColor: "#fff",

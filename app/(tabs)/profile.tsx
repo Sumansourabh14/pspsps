@@ -14,6 +14,7 @@ import { Button } from "react-native-paper";
 
 interface User {
   full_name: string;
+  email: string;
 }
 
 export default function ProfileScreen() {
@@ -32,7 +33,7 @@ export default function ProfileScreen() {
 
       if (mounted) {
         if (error) {
-          console.error("Error fetching pets:", error);
+          console.error("Error fetching user details:", error);
         } else {
           setUser(data);
         }
@@ -67,7 +68,10 @@ export default function ProfileScreen() {
               color="#4CAF50"
               style={styles.avatar}
             />
-            <Text style={styles.fullName}>{user.full_name}</Text>
+            <Text style={styles.fullName}>
+              {user.full_name || `No name set`}
+            </Text>
+            <Text style={styles.email}>{user.email}</Text>
           </View>
         )}
 
@@ -137,7 +141,7 @@ const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
     paddingHorizontal: 16,
-    paddingTop: 20,
+    paddingTop: 8,
     paddingBottom: 30,
     justifyContent: "space-between",
     alignItems: "center",
@@ -161,6 +165,11 @@ const styles = StyleSheet.create({
     fontFamily: "NotoSans-Bold",
     fontSize: 24,
     marginTop: 4,
+    textAlign: "center",
+  },
+  email: {
+    fontFamily: "NotoSans-Regular",
+    fontSize: 14,
     textAlign: "center",
   },
   buttonGrid: {
