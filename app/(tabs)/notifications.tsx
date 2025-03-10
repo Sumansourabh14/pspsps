@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
     borderRightColor: "#4CAF50",
   },
   notificationTitle: {
-    fontSize: 16,
+    fontSize: 14,
     color: "#333",
     marginBottom: 4,
     fontFamily: "NotoSans-Bold",
