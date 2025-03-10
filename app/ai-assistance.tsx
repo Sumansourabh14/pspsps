@@ -220,7 +220,11 @@ const AiAssistance = () => {
             </Link>
             {!loading && (
               <Link href={`/`} asChild>
-                <Button mode="outlined" style={styles.button}>
+                <Button
+                  mode="outlined"
+                  style={styles.button}
+                  labelStyle={{ fontFamily: "NotoSans-Bold" }}
+                >
                   Home
                 </Button>
               </Link>
@@ -303,7 +307,7 @@ export default AiAssistance;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F8FAFC",
+    backgroundColor: "#FFF",
     paddingHorizontal: 20,
     paddingTop: 20,
   },
@@ -333,7 +337,7 @@ const styles = StyleSheet.create({
   button: {
     borderRadius: 8,
     paddingVertical: 6,
-    elevation: 2,
+    backgroundColor: "#4CAF50",
   },
   yesButton: {
     backgroundColor: "#10B981",

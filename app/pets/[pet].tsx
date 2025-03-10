@@ -224,9 +224,11 @@ const PetScreen = () => {
 
             <View style={styles.infoItem}>
               <Ionicons name="calendar" size={24} color="#4CAF50" />
-              <Text style={styles.infoLabel}>Age</Text>
+              <Text style={styles.infoLabel}>Age (in months)</Text>
               <Text style={styles.infoValue}>
-                {petData.birth_date
+                {!!petData.age
+                  ? petData.age
+                  : petData.birth_date
                   ? calculateAge(petData.birth_date)
                   : "Unknown"}
               </Text>
