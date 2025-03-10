@@ -22,7 +22,7 @@ interface Pet {
   id: number;
   user_id: string;
   name: string;
-  species: "dog" | "cat" | "fish";
+  species: "Dog" | "Cat" | "Fish";
   gender: "male" | "female" | "unknown";
   birth_date?: string;
   image_url?: string;
@@ -109,6 +109,9 @@ const EditPetScreen = () => {
       <Stack.Screen
         options={{
           headerTitle: `Edit ${petData.name ? petData.name : "NA"}`,
+          headerTitleStyle: {
+            fontFamily: "NotoSans-Bold",
+          },
           headerRight: () => (
             <Button
               onPress={handleSave}
@@ -149,16 +152,46 @@ const EditPetScreen = () => {
                 onValueChange={(value) =>
                   setPetData({
                     ...petData,
-                    species: value as "dog" | "cat" | "fish",
+                    species: value as "Dog" | "Cat" | "Fish",
                   })
                 }
                 buttons={[
-                  { value: "dog", label: "Dog", icon: "dog" },
-                  { value: "cat", label: "Cat", icon: "cat" },
-                  { value: "fish", label: "Fish", icon: "fish" },
+                  {
+                    value: "Dog",
+                    label: "Dog",
+                    style: {
+                      backgroundColor:
+                        petData.species === "Dog" ? "#4CAF50" : "#FFF",
+                    },
+                    labelStyle: {
+                      color: petData.species === "Dog" ? "#FFF" : "#000",
+                    },
+                  },
+                  {
+                    value: "Cat",
+                    label: "Cat",
+                    style: {
+                      backgroundColor:
+                        petData.species === "Cat" ? "#4CAF50" : "#FFF",
+                    },
+                    labelStyle: {
+                      color: petData.species === "Cat" ? "#FFF" : "#000",
+                    },
+                  },
+                  {
+                    value: "Fish",
+                    label: "Fish",
+                    style: {
+                      backgroundColor:
+                        petData.species === "Fish" ? "#4CAF50" : "#FFF",
+                    },
+                    labelStyle: {
+                      color: petData.species === "Fish" ? "#FFF" : "#000",
+                    },
+                  },
                 ]}
                 style={styles.segmentedButtons}
-                theme={{ roundness: 8 }}
+                theme={{ roundness: 1 }}
               />
 
               {/* Gender Selection */}
@@ -172,16 +205,42 @@ const EditPetScreen = () => {
                   })
                 }
                 buttons={[
-                  { value: "male", label: "Male", icon: "gender-male" },
-                  { value: "female", label: "Female", icon: "gender-female" },
+                  {
+                    value: "male",
+                    label: "Male",
+                    style: {
+                      backgroundColor:
+                        petData.gender === "male" ? "#4CAF50" : "#FFF",
+                    },
+                    labelStyle: {
+                      color: petData.gender === "male" ? "#FFF" : "#000",
+                    },
+                  },
+                  {
+                    value: "female",
+                    label: "Female",
+                    style: {
+                      backgroundColor:
+                        petData.gender === "female" ? "#4CAF50" : "#FFF",
+                    },
+                    labelStyle: {
+                      color: petData.gender === "female" ? "#FFF" : "#000",
+                    },
+                  },
                   {
                     value: "unknown",
                     label: "Unknown",
-                    icon: "help-circle-outline",
+                    style: {
+                      backgroundColor:
+                        petData.gender === "unknown" ? "#4CAF50" : "#FFF",
+                    },
+                    labelStyle: {
+                      color: petData.gender === "unknown" ? "#FFF" : "#000",
+                    },
                   },
                 ]}
                 style={styles.segmentedButtons}
-                theme={{ roundness: 8 }}
+                theme={{ roundness: 1 }}
               />
 
               {/* Birth Date Picker */}
@@ -266,7 +325,7 @@ const styles = StyleSheet.create({
   loadingText: {
     fontSize: 18,
     color: "#666",
-    fontStyle: "italic",
+    fontFamily: "NotoSans-SemiBold",
   },
   card: {
     padding: 12,
@@ -275,12 +334,13 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#333",
     marginTop: 12,
-    fontWeight: "700",
     paddingHorizontal: 8,
+    fontFamily: "NotoSans-Bold",
   },
   input: {
     marginVertical: 8,
     backgroundColor: "#fff",
+    fontFamily: "NotoSans-Bold",
   },
   segmentedButtons: {
     marginVertical: 8,
@@ -295,8 +355,8 @@ const styles = StyleSheet.create({
   },
   headerSaveLabel: {
     fontSize: 14,
-    fontWeight: "600",
     color: "#fff",
+    fontFamily: "NotoSans-Bold",
   },
   saveButton: {
     position: "absolute",
@@ -310,7 +370,7 @@ const styles = StyleSheet.create({
   },
   saveButtonLabel: {
     fontSize: 18,
-    fontWeight: "600",
     color: "#fff",
+    fontFamily: "NotoSans-Bold",
   },
 });
