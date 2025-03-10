@@ -110,7 +110,7 @@ export default function ProfileScreen() {
           <Link href={"/update-user"} asChild>
             <TouchableOpacity style={styles.secondaryButton}>
               <Ionicons name="pencil-outline" size={20} color="#fff" />
-              <Text style={styles.secondaryButtonText}>Update Profile</Text>
+              <Text style={styles.secondaryButtonText}>Edit Profile</Text>
             </TouchableOpacity>
           </Link>
           <Link href={"/feedback"} asChild>

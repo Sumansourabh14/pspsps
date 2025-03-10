@@ -63,7 +63,7 @@ export default function OnboardingScreen() {
     setStep(newStep);
   };
 
-  const renderContent = (title, subtitle) => (
+  const renderContent = (title: string, subtitle: string) => (
     <View style={styles.content}>
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.subtitle}>{subtitle}</Text>
