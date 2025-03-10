@@ -5,7 +5,6 @@ import { Redirect } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, StyleSheet } from "react-native";
 
-// Sample notification data type
 interface Notification {
   id: string;
   pet_id: string;
@@ -60,7 +59,7 @@ export default function NotificationsScreen() {
       return;
     }
 
-    return data.name;
+    return data.name || `Species: ${data.species}`;
   };
 
   if (loading) {
@@ -150,7 +149,7 @@ export default function NotificationsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F5F6F5",
+    backgroundColor: "#FFF",
   },
   wrapper: {
     flex: 1,
@@ -184,18 +183,20 @@ const styles = StyleSheet.create({
   },
   notificationTitle: {
     fontSize: 16,
-    fontWeight: "600",
     color: "#333",
     marginBottom: 4,
+    fontFamily: "NotoSans-Bold",
   },
   notificationMessage: {
     fontSize: 14,
     color: "#666",
     marginBottom: 4,
+    fontFamily: "NotoSans-Regular",
   },
   notificationTime: {
     fontSize: 12,
     color: "#999",
+    fontFamily: "NotoSans-SemiBold",
   },
   emptyText: {
     textAlign: "center",
@@ -203,49 +204,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 20,
     fontFamily: "NotoSans-Regular",
-  },
-  // Keeping your original styles
-  profileHeader: {
-    alignItems: "center",
-  },
-  avatar: {
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
-  },
-  fullName: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: "#333",
-    marginTop: 16,
-    textAlign: "center",
-    textShadowColor: "rgba(0, 0, 0, 0.1)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
-  },
-  btn: {
-    borderWidth: 0,
-    borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 10,
-    width: "90%",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 5,
-  },
-  logoutBtn: {
-    backgroundColor: "#D32F2F",
-  },
-  btnText: {
-    color: "#fff",
-    fontSize: 14,
-    fontWeight: "600",
   },
 });
