@@ -96,23 +96,31 @@ export default function OnboardingScreen() {
           <View style={styles.page}>
             {renderContent(
               "Welcome to PetPal",
-              "Your all-in-one companion for keeping your pets happy and healthy"
+              "Simplify pet care with one tap—track, remind, and love your furry pals!"
             )}
           </View>
 
           {/* Step 2 */}
           <View style={styles.page}>
             {renderContent(
-              "Add Your Pet and Forget",
-              "Let the AI handle daily reminders"
+              "Smart Care, Powered by AI",
+              "Add your pet and let us set the perfect reminder schedule for you"
             )}
           </View>
 
           {/* Step 3 */}
           <View style={styles.page}>
             {renderContent(
-              "Never Miss a Moment",
-              "Set reminders for feeding, walks, and vet appointments with ease"
+              "Stay Ahead of Every Paw-sibility",
+              "From feeding to vet visits, get timely alerts so you never miss a beat"
+            )}
+          </View>
+
+          {/* Step 4 */}
+          <View style={styles.page}>
+            {renderContent(
+              "Your Pet, Your Way",
+              "Customize profiles, update details, and keep everything in one happy place"
             )}
           </View>
         </ScrollView>
@@ -139,12 +147,12 @@ export default function OnboardingScreen() {
               contentStyle={styles.buttonContent}
               disabled={isScrolling} // Disable button during animation
             >
-              {step === 3 ? "Let's Go!" : "Next"}
+              {step === 4 ? "Let's Go!" : "Next"}
             </Button>
           </View>
 
           <View style={styles.stepIndicator}>
-            {[1, 2, 3].map((num) => (
+            {[1, 2, 3, 4].map((num) => (
               <View
                 key={num}
                 style={[styles.stepDot, step === num && styles.activeStepDot]}

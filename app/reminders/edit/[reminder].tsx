@@ -48,6 +48,7 @@ enum Frequency {
   Monthly = "monthly",
   Yearly = "yearly",
   Custom = "custom",
+  Once = "once",
 }
 
 interface Pet {
@@ -70,10 +71,10 @@ const petCareTasks = [
 
 const frequencyOptions = [
   { id: 1, label: "Daily", value: "daily" },
-  { id: 2, label: "Weekly", value: "weekly" },
-  { id: 3, label: "Monthly", value: "monthly" },
-  { id: 4, label: "Yearly", value: "yearly" },
-  { id: 5, label: "Custom", value: "custom" },
+  // { id: 2, label: "Weekly", value: "weekly" },
+  // { id: 3, label: "Monthly", value: "monthly" },
+  // { id: 4, label: "Yearly", value: "yearly" },
+  // { id: 5, label: "Custom", value: "custom" },
   { id: 6, label: "Once", value: "once" },
 ];
 
@@ -213,7 +214,14 @@ const EditReminderScreen = () => {
 
   return (
     <>
-      <Stack.Screen options={{ title: "Edit Reminder" }} />
+      <Stack.Screen
+        options={{
+          title: "Edit Reminder",
+          headerTitleStyle: {
+            fontFamily: "NotoSans-Black",
+          },
+        }}
+      />
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.scrollContent}
@@ -227,7 +235,11 @@ const EditReminderScreen = () => {
               style={styles.picker}
             >
               {pets.map((pet) => (
-                <Picker.Item key={pet.id} label={pet.name} value={pet.id} />
+                <Picker.Item
+                  key={pet.id}
+                  label={pet.name || `No name: ${pet.species}`}
+                  value={pet.id}
+                />
               ))}
             </Picker>
           )}
@@ -378,18 +390,16 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: 8,
     backgroundColor: "#fff",
-    elevation: 6,
-    padding: 16,
   },
   label: {
     fontSize: 14,
-    fontWeight: "700",
     color: "#333",
-    marginTop: 8,
-    marginBottom: 8,
+    marginTop: 4,
+    marginBottom: 4,
+    fontFamily: "NotoSans-Bold",
   },
   input: {
-    marginVertical: 8,
+    marginVertical: 4,
     backgroundColor: "#fff",
   },
   picker: {
@@ -420,9 +430,9 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   saveButtonLabel: {
-    fontSize: 18,
-    fontWeight: "700",
+    fontSize: 16,
     color: "#fff",
+    fontFamily: "NotoSans-Bold",
   },
 });
 
