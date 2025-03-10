@@ -21,7 +21,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.sumsourabh14.pspsps",
+      "package": "com.sumsourabh14.clawclock",
       "versionCode": 1
     },
     "web": {
