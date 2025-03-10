@@ -11,7 +11,7 @@ interface Pet {
   id: number;
   user_id: string;
   name: string;
-  species: "dog" | "cat" | "fish";
+  species: "Dog" | "Cat" | "Fish";
   gender: "male" | "female" | "unknown";
   birth_date?: string;
   age?: number;
@@ -167,11 +167,13 @@ const PetScreen = () => {
             <Avatar.Icon
               size={150}
               icon={
-                petData.species === "dog"
+                petData.species === "Dog"
                   ? "dog"
-                  : petData.species === "cat"
+                  : petData.species === "Cat"
                   ? "cat"
-                  : petData.species === "fish" && "fish"
+                  : petData.species === "Fish"
+                  ? "fish"
+                  : "help"
               }
               style={styles.avatar}
             />
@@ -183,11 +185,11 @@ const PetScreen = () => {
             <View style={styles.infoItem}>
               <FontAwesome5
                 name={
-                  petData.species === "dog"
+                  petData.species === "Dog"
                     ? "dog"
-                    : petData.species === "cat"
+                    : petData.species === "Cat"
                     ? "cat"
-                    : petData.species === "fish" && "fish"
+                    : petData.species === "Fish" && "fish"
                 }
                 size={24}
                 color="#4CAF50"
@@ -206,7 +208,9 @@ const PetScreen = () => {
                     ? "male"
                     : petData.gender === "female"
                     ? "female"
-                    : petData.gender === "unknown" && "help"
+                    : petData.gender === "unknown"
+                    ? "help"
+                    : "help"
                 }
                 size={24}
                 color="#4CAF50"
