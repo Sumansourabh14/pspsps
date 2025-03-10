@@ -33,7 +33,7 @@ export default function SignUpScreen() {
         {/* Header Section */}
         <View style={styles.header}>
           <Ionicons name="paw" size={70} color="#ffffff" />
-          <Text style={styles.title}>PetPal</Text>
+          <Text style={styles.title}>ClawClock</Text>
           <Text style={styles.subtitle}>Join the pet care community</Text>
         </View>
 

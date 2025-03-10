@@ -95,8 +95,8 @@ export default function OnboardingScreen() {
           {/* Step 1 */}
           <View style={styles.page}>
             {renderContent(
-              "Welcome to PetPal",
-              "Simplify pet care with one tap—track, remind, and love your furry pals!"
+              "ClawClock Keeps It Ticking",
+              "Your pet’s daily needs, timed to perfection"
             )}
           </View>
 

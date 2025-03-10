@@ -76,7 +76,7 @@ const WelcomeScreen = () => {
                   color="#fff"
                   style={styles.pawIcon}
                 />
-                <Text style={styles.title}>PetPal</Text>
+                <Text style={styles.title}>ClawClock</Text>
                 <Text style={styles.subtitle}>
                   Your Pet's Ultimate Companion
                 </Text>

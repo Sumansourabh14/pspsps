@@ -34,7 +34,7 @@ export default function SignInScreen() {
         {/* Header Section */}
         <View style={styles.header}>
           <Ionicons name="paw" size={70} color="#ffffff" />
-          <Text style={styles.title}>PetPal</Text>
+          <Text style={styles.title}>ClawClock</Text>
           <Text style={styles.subtitle}>Welcome back to your pet's home</Text>
         </View>
 
@@ -89,7 +89,7 @@ export default function SignInScreen() {
           </Button>
 
           <View style={styles.signupContainer}>
-            <Text style={styles.signupText}>New to PetPal? </Text>
+            <Text style={styles.signupText}>New to ClawClock? </Text>
             <Link href={"/sign-up"} style={styles.signupLink}>
               Sign Up
             </Link>
